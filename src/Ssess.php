@@ -31,16 +31,22 @@ class Ssess implements \SessionHandlerInterface
             return '';
         }
 
-        return openssl_decrypt($encrypted_data, $this->cipher, $session_id, 0, $session_id);
+        return openssl_decrypt($encrypted_data['data'], $this->cipher, $session_id, 0, $encrypted_data['iv']);
     }
 
     public function write($session_id, $session_data)
     {
         $file_name = $this->getFileName($session_id);
 
-        $encrypted_data = openssl_encrypt($session_data, $this->cipher, $session_id, 0, $session_id);
+        $iv_length = openssl_cipher_iv_length($this->cipher);
+        $iv = openssl_random_pseudo_bytes($iv_length);
+        $encrypted_data = openssl_encrypt($session_data, $this->cipher, $session_id, 0, $iv);
 
-        return file_put_contents("$this->savePath/$file_name", $encrypted_data) !== false;
+        $content = [
+            'data' => $encrypted_data,
+            'iv' => $iv
+        ];
+        return file_put_contents("$this->savePath/$file_name", $content) !== false;
     }
 
     public function destroy($session_id)
