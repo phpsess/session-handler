@@ -16,7 +16,7 @@ This package implements the PHP `SessionHandlerInterface`, so you just have to s
 ```
 use Ssess\Ssess;
 
-$Ssess = new Ssess;
+$Ssess = new Ssess();
 
 session_set_save_handler($Ssess, true);
 ```
