@@ -31,6 +31,12 @@ class Ssess implements \SessionHandlerInterface
             return '';
         }
 
+        $encrypted_data = json_decode($encrypted_data);
+
+        if (!$encrypted_data) {
+            return '';
+        }
+
         return openssl_decrypt($encrypted_data['data'], $this->cipher, $session_id, 0, $encrypted_data['iv']);
     }
 
