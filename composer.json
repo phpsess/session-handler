@@ -1,5 +1,5 @@
 {
-    "name": "ayrton/ssess",
+    "name": "ayrtonvwf/ssess",
     "description": "A PHP session handler that encrypts the session data.",
     "type": "library",
     "require": {
