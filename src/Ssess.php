@@ -42,10 +42,10 @@ class Ssess implements \SessionHandlerInterface
         $iv = openssl_random_pseudo_bytes($iv_length);
         $encrypted_data = openssl_encrypt($session_data, $this->cipher, $session_id, 0, $iv);
 
-        $content = [
+        $content = json_encode([
             'data' => $encrypted_data,
             'iv' => $iv
-        ];
+        ]);
         return file_put_contents("$this->savePath/$file_name", $content) !== false;
     }
 
