@@ -2,7 +2,7 @@
 
 namespace Sess;
 
-class Ssess implements SessionHandlerInterface
+class Ssess implements \SessionHandlerInterface
 {
     private $savePath;
     private $cipher = 'aes128';
