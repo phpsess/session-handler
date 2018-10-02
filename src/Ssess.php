@@ -37,7 +37,9 @@ class Ssess implements \SessionHandlerInterface
             return '';
         }
 
-        return openssl_decrypt($encrypted_data['data'], $this->cipher, $session_id, 0, $encrypted_data['iv']);
+        $iv = base64_decode($encrypted_data->iv);
+
+        return openssl_decrypt($encrypted_data->data, $this->cipher, $session_id, 0, $iv);
     }
 
     public function write($session_id, $session_data)
@@ -50,7 +52,7 @@ class Ssess implements \SessionHandlerInterface
 
         $content = json_encode([
             'data' => $encrypted_data,
-            'iv' => $iv
+            'iv' => base64_encode($iv)
         ]);
         return file_put_contents("$this->savePath/$file_name", $content) !== false;
     }
