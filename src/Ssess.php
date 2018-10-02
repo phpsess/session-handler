@@ -1,6 +1,6 @@
 <?php
 
-namespace Sess;
+namespace Ssess;
 
 class Ssess implements \SessionHandlerInterface
 {
