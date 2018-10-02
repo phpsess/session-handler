@@ -1,0 +1,5 @@
+{
+    "require": {
+        "ext-openssl": "^7.2"
+    }
+}
