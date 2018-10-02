@@ -1,5 +1,15 @@
 {
+    "name": "ayrton/ssess",
+    "description": "A PHP session handler that encrypts the session data.",
+    "type": "library",
     "require": {
         "ext-openssl": "^7.2"
-    }
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Ayrton Fidelis",
+            "email": "ayrton.vargas33@gmail.com"
+        }
+    ]
 }
