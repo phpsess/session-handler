@@ -12,5 +12,10 @@
             "name": "Ayrton Fidelis",
             "email": "ayrton.vargas33@gmail.com"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-4": {
+            "Ssess\\": "src/"
+        }
+    }
 }
