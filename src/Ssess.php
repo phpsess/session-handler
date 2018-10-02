@@ -1,5 +1,7 @@
 <?php
 
+namespace Sess;
+
 class Ssess implements SessionHandlerInterface
 {
     private $savePath;
