@@ -3,8 +3,7 @@
     "description": "A PHP session handler that encrypts the session data.",
     "type": "library",
     "require": {
-        "ext-openssl": "^7.2",
-        "ext-json": "^1.6"
+        "ext-openssl": "^7.2"
     },
     "license": "MIT",
     "authors": [
