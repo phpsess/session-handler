@@ -24,7 +24,7 @@ class Ssess implements \SessionHandlerInterface
 
     public function read($session_id)
     {
-        $file_name = 'ssess_'.sha1($session_id);
+        $file_name = $this->getFileName($session_id);
         $encrypted_data = @file_get_contents("$this->savePath/$file_name");
 
         if (!$encrypted_data) {
@@ -36,7 +36,7 @@ class Ssess implements \SessionHandlerInterface
 
     public function write($session_id, $session_data)
     {
-        $file_name = 'ssess_'.sha1($session_id);
+        $file_name = $this->getFileName($session_id);
 
         $encrypted_data = openssl_encrypt($session_data, $this->cipher, $session_id, 0, $session_id);
 
@@ -45,7 +45,7 @@ class Ssess implements \SessionHandlerInterface
 
     public function destroy($session_id)
     {
-        $file_name = 'ssess_'.sha1($session_id);
+        $file_name = $this->getFileName($session_id);
 
         $file = "$this->savePath/$file_name";
         if (file_exists($file)) {
@@ -64,5 +64,10 @@ class Ssess implements \SessionHandlerInterface
         }
 
         return true;
+    }
+
+    private function getFileName($session_id)
+    {
+        return 'ssess_'.sha1($session_id);
     }
 }
