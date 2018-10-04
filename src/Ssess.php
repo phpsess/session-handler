@@ -23,7 +23,8 @@ namespace Ssess;
 class Ssess implements \SessionHandlerInterface
 {
     private $savePath;
-    private $cipher = 'aes128';
+    private $encryptionAlgorithm = 'aes128';
+    private $hashAlgorithm = 'sha256';
 
     public function open($save_path, $name)
     {
@@ -87,9 +88,9 @@ class Ssess implements \SessionHandlerInterface
 
     private function encode($session_id, $session_data)
     {
-        $iv_length = openssl_cipher_iv_length($this->cipher);
+        $iv_length = openssl_cipher_iv_length($this->encryptionAlgorithm);
         $iv = openssl_random_pseudo_bytes($iv_length);
-        $encrypted_data = openssl_encrypt($session_data, $this->cipher, $session_id, 0, $iv);
+        $encrypted_data = openssl_encrypt($session_data, $this->encryptionAlgorithm, $session_id, 0, $iv);
 
         return json_encode([
             'data' => $encrypted_data,
@@ -107,11 +108,11 @@ class Ssess implements \SessionHandlerInterface
 
         $iv = base64_decode($encrypted_data->iv);
 
-        return openssl_decrypt($encrypted_data->data, $this->cipher, $session_id, 0, $iv);
+        return openssl_decrypt($encrypted_data->data, $this->encryptionAlgorithm, $session_id, 0, $iv);
     }
 
     private function getFileName($session_id)
     {
-        return 'ssess_'.sha1($session_id);
+        return 'ssess_'.openssl_digest($session_id, $this->hashAlgorithm);
     }
 }
