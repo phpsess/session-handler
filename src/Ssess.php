@@ -45,9 +45,10 @@ class Ssess implements \SessionHandlerInterface
     {
         $file_name = $this->getFileName($session_id);
 
-        $content = @file_get_contents("$this->savePath/$file_name");
+        $content = file_get_contents("$this->savePath/$file_name");
 
-        if (!$content) {
+        if ($content === FALSE) {
+            session_regenerate_id();
             return '';
         }
 
