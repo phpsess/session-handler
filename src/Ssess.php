@@ -2,6 +2,24 @@
 
 namespace Ssess;
 
+/*
+ * TODO Use DockBlocks
+ * TODO Respect session.use_strict_mode (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.non-adaptive-session)
+ * TODO Implement timestamp based session (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-data-deletion)
+ * TODO Implement session locking (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-locking)
+ * TODO Allow user to specify hash algorithm
+ * TODO Allow user to specify encryption algorithm
+ * TODO Allow user to specify APP name so that session files from different applications never gets mixed
+ * TODO Allow user to specify APP key so that even if a hacker get the session files and knows a session_id, it wouldn't be able to decrypt
+ * TODO Make tests
+ * TODO Show what a session file looks like with and without encryption in README
+ * TODO Option to lock session to IP
+ * TODO Option to lock session to User Agent
+ * TODO Option to lock session to Host
+ * TODO Option to create session cookie with mutating random name
+ * TODO Create way to regenerate the session_id
+ * TODO Create a way to change encryption/hash algorithms over time without loosing previous sessions, to allow incremental security upgrades
+ */
 class Ssess implements \SessionHandlerInterface
 {
     private $savePath;
