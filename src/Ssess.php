@@ -33,12 +33,6 @@ class Ssess implements \SessionHandlerInterface
             mkdir($this->savePath, 0777);
         }
 
-        $session_id = session_id();
-        $file_name = $this->getFileName($session_id);
-        if (!file_exists($file_name)) {
-            session_regenerate_id();
-        }
-
         return true;
     }
 
