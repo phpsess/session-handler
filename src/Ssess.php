@@ -4,29 +4,34 @@ namespace Ssess;
 
 /*
  * TODO Use DockBlocks
- * TODO Respect session.use_strict_mode (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.non-adaptive-session)
  * TODO Implement timestamp based session (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-data-deletion)
  * TODO Implement session locking (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-locking)
  * TODO Allow user to specify hash algorithm
  * TODO Allow user to specify encryption algorithm
  * TODO Allow user to specify APP name so that session files from different applications never gets mixed
- * TODO Allow user to specify APP key so that even if a hacker get the session files and knows a session_id, it wouldn't be able to decrypt
  * TODO Make tests
+ * TODO Instruct users to set the session.use_strict_mode ini config
  * TODO Show what a session file looks like with and without encryption in README
  * TODO Option to lock session to IP
  * TODO Option to lock session to User Agent
  * TODO Option to lock session to Host
  * TODO Option to create session cookie with mutating random name
- * TODO Create way to regenerate the session_id
  * TODO Create a way to change encryption/hash algorithms over time without loosing previous sessions, to allow incremental security upgrades
  */
 class Ssess implements \SessionHandlerInterface
 {
     private $savePath;
+    private $appKey;
     private $encryptionAlgorithm = 'aes128';
-    private $hashAlgorithm = 'sha256';
+    private $hashAlgorithm = 'sha512';
 
-    public function __construct()
+    public function __construct($app_key)
+    {
+        $this->appKey = openssl_digest($app_key, $this->hashAlgorithm);
+        $this->handleStrict();
+    }
+
+    private function handleStrict()
     {
         if (!ini_get('session.use_strict_mode') || headers_sent()) {
             return;
@@ -118,7 +123,8 @@ class Ssess implements \SessionHandlerInterface
     {
         $iv_length = openssl_cipher_iv_length($this->encryptionAlgorithm);
         $iv = openssl_random_pseudo_bytes($iv_length);
-        $encrypted_data = openssl_encrypt($session_data, $this->encryptionAlgorithm, $session_id, 0, $iv);
+        $encryption_key = $this->getEncryptionKey($session_id);
+        $encrypted_data = openssl_encrypt($session_data, $this->encryptionAlgorithm, $encryption_key, 0, $iv);
 
         return json_encode([
             'data' => $encrypted_data,
@@ -135,12 +141,18 @@ class Ssess implements \SessionHandlerInterface
         }
 
         $iv = base64_decode($encrypted_data->iv);
+        $encryption_key = $this->getEncryptionKey($session_id);
 
-        return openssl_decrypt($encrypted_data->data, $this->encryptionAlgorithm, $session_id, 0, $iv);
+        return openssl_decrypt($encrypted_data->data, $this->encryptionAlgorithm, $encryption_key, 0, $iv);
     }
 
     private function getFileName($session_id)
     {
         return 'ssess_'.openssl_digest($session_id, $this->hashAlgorithm);
+    }
+
+    private function getEncryptionKey($session_id)
+    {
+        return $this->appKey . openssl_digest($session_id, $this->hashAlgorithm);
     }
 }
