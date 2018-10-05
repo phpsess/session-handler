@@ -26,6 +26,34 @@ class Ssess implements \SessionHandlerInterface
     private $encryptionAlgorithm = 'aes128';
     private $hashAlgorithm = 'sha256';
 
+    public function __construct()
+    {
+        if (!ini_get('session.use_strict_mode') || headers_sent()) {
+            return;
+        }
+
+        $cookie_name = session_name();
+        if (empty($_COOKIE[$cookie_name])) {
+            return;
+        }
+
+        $session_id = $_COOKIE[$cookie_name];
+
+        $save_path = session_save_path();
+        if (!is_dir($save_path)) {
+            return;
+        }
+
+        $file_name = $this->getFileName($session_id);
+        if (file_exists("$save_path/$file_name")) {
+            return;
+        }
+
+        session_start();
+        session_regenerate_id();
+        session_write_close();
+    }
+
     public function open($save_path, $name)
     {
         $this->savePath = $save_path;
