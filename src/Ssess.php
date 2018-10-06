@@ -3,11 +3,7 @@
 namespace Ssess;
 
 /**
- * Manages the session in a secure way.
- *
- * Features:
- * - Encrypts the session data so that not even the server admin can read.
- * - Rejects arbitrary session ids, generating a new one when a non-existent id is provided.
+ * Handles the session in a secure way.
  *
  * @todo Implement timestamp based session (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-data-deletion)
  * @todo Implement session locking (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-locking)
@@ -18,6 +14,7 @@ namespace Ssess;
  * @todo Option to lock session to Host
  * @todo Option to create session cookie with mutating random name
  * @todo Create a way to change encryption/hash algorithms over time without loosing previous sessions, to allow incremental security upgrades
+ * @todo Provide a storage driver interface (such as file, mysqli, pdo, redis, memcached, etc)
  *
  * @package Ssess
  * @author Ayrton Fidelis <ayrton.vargas33@gmail.com>
