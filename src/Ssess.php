@@ -2,28 +2,26 @@
 
 namespace Ssess;
 
-/*
- * TODO Implement timestamp based session (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-data-deletion)
- * TODO Implement session locking (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-locking)
- * TODO Allow user to specify hash algorithm
- * TODO Allow user to specify encryption algorithm
- * TODO Allow user to specify APP name so that session files from different applications never gets mixed
- * TODO Make tests
- * TODO Instruct users to set the session.use_strict_mode ini config
- * TODO Show what a session file looks like with and without encryption in README
- * TODO Option to lock session to IP
- * TODO Option to lock session to User Agent
- * TODO Option to lock session to Host
- * TODO Option to create session cookie with mutating random name
- * TODO Create a way to change encryption/hash algorithms over time without loosing previous sessions, to allow incremental security upgrades
- */
-
 /**
  * Manages the session in a secure way.
  *
  * Features:
  * - Encrypts the session data so that not even the server admin can read.
  * - Rejects arbitrary session ids, generating a new one when a non-existent id is provided.
+ *
+ * @todo Implement timestamp based session (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-data-deletion)
+ * @todo Implement session locking (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-locking)
+ * @todo Allow user to specify hash algorithm
+ * @todo Allow user to specify encryption algorithm
+ * @todo Allow user to specify APP name so that session files from different applications never gets mixed
+ * @todo Make tests
+ * @todo Instruct users to set the session.use_strict_mode ini config
+ * @todo Show what a session file looks like with and without encryption in README
+ * @todo Option to lock session to IP
+ * @todo Option to lock session to User Agent
+ * @todo Option to lock session to Host
+ * @todo Option to create session cookie with mutating random name
+ * @todo Create a way to change encryption/hash algorithms over time without loosing previous sessions, to allow incremental security upgrades
  *
  * @package Ssess
  * @author Ayrton Fidelis <ayrton.vargas33@gmail.com>
