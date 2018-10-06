@@ -47,6 +47,11 @@ class Ssess implements \SessionHandlerInterface
     private $hashAlgorithm;
 
     /**
+     * @var boolean $warnInsecureSettings Whether the handler should warn about insecure settings or not.
+     */
+    public static $warnInsecureSettings = true;
+
+    /**
      * Ssess constructor.
      *
      * It computes the app_key hash and calls the function that handles the strict mode.
@@ -60,7 +65,31 @@ class Ssess implements \SessionHandlerInterface
         $this->hashAlgorithm = $hash_algorithm;
         $this->encryptionAlgorithm = $encryption_algorithm;
         $this->appKey = openssl_digest($app_key, $this->hashAlgorithm);
+        $this->warnInsecureSettings();
         $this->handleStrict();
+    }
+
+    private function warnInsecureSettings()
+    {
+        if (!self::$warnInsecureSettings) {
+            return;
+        }
+
+        if (!ini_get('session.use_cookies')) {
+            trigger_error('Insecure session config: session.use_cookies should be set to true', E_USER_WARNING);
+        }
+
+        if (!ini_get('session.use_only_cookies')) {
+            trigger_error('Insecure session config: session.use_only_cookies should be set to true', E_USER_WARNING);
+        }
+
+        if (ini_get('session.use_trans_sid')) {
+            trigger_error('Insecure session config: session.use_trans_id should be set to false', E_USER_WARNING);
+        }
+
+        if (!ini_get('session.use_strict_mode')) {
+            trigger_error('Insecure session config: session.use_strict_mode should be set to true', E_USER_WARNING);
+        }
     }
 
     /**
