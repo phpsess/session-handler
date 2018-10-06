@@ -43,12 +43,12 @@ class Ssess implements \SessionHandlerInterface
     /**
      * @var string $encryptionAlgorithm The algorithm used to encrypt the session data. For a list of available algorithms, use openssl_get_cipher_methods().
      */
-    private $encryptionAlgorithm = 'aes128';
+    private $encryptionAlgorithm;
 
     /**
      * @var string $hashAlgorithm The algorithm used to hash the keys and the session file name. For a list of available algorithms, use openssl_get_md_methods().
      */
-    private $hashAlgorithm = 'sha512';
+    private $hashAlgorithm;
 
     /**
      * Ssess constructor.
@@ -56,9 +56,13 @@ class Ssess implements \SessionHandlerInterface
      * It computes the app_key hash and calls the function that handles the strict mode.
      *
      * @param string $app_key The encryption key of the app. The hash of it will be used as part of the encryption key.
+     * @param string $hash_algorithm The algorithm used to hash. For a list of available algorithms, use openssl_get_md_methods().
+     * @param string $encryption_algorithm The algorithm used for encryption. For a list of available algorithms, use openssl_get_cipher_methods().
      */
-    public function __construct($app_key)
+    public function __construct($app_key, $hash_algorithm = 'sha512', $encryption_algorithm = 'aes128')
     {
+        $this->hashAlgorithm = $hash_algorithm;
+        $this->encryptionAlgorithm = $encryption_algorithm;
         $this->appKey = openssl_digest($app_key, $this->hashAlgorithm);
         $this->handleStrict();
     }
