@@ -3,7 +3,6 @@
 namespace Ssess;
 
 /*
- * TODO Use DockBlocks
  * TODO Implement timestamp based session (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-data-deletion)
  * TODO Implement session locking (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-locking)
  * TODO Allow user to specify hash algorithm
@@ -18,19 +17,57 @@ namespace Ssess;
  * TODO Option to create session cookie with mutating random name
  * TODO Create a way to change encryption/hash algorithms over time without loosing previous sessions, to allow incremental security upgrades
  */
+
+/**
+ * Manages the session in a secure way.
+ *
+ * Features:
+ * - Encrypts the session data so that not even the server admin can read.
+ * - Rejects arbitrary session ids, generating a new one when a non-existent id is provided.
+ *
+ * @package Ssess
+ * @author Ayrton Fidelis <ayrton.vargas33@gmail.com>
+ */
 class Ssess implements \SessionHandlerInterface
 {
+    /**
+     * @var string $savePath The full path where the session files are stored
+     */
     private $savePath;
+
+    /**
+     * @var string $appKey The hashed key of the app. This is only part of the key used to encrypt the session data.
+     */
     private $appKey;
+
+    /**
+     * @var string $encryptionAlgorithm The algorithm used to encrypt the session data. For a list of available algorithms, use openssl_get_cipher_methods().
+     */
     private $encryptionAlgorithm = 'aes128';
+
+    /**
+     * @var string $hashAlgorithm The algorithm used to hash the keys and the session file name. For a list of available algorithms, use openssl_get_md_methods().
+     */
     private $hashAlgorithm = 'sha512';
 
+    /**
+     * Ssess constructor.
+     *
+     * It computes the app_key hash and calls the function that handles the strict mode.
+     *
+     * @param string $app_key The encryption key of the app. The hash of it will be used as part of the encryption key.
+     */
     public function __construct($app_key)
     {
         $this->appKey = openssl_digest($app_key, $this->hashAlgorithm);
         $this->handleStrict();
     }
 
+    /**
+     * Rejects arbitrary session ids.
+     *
+     * @see http://php.net/manual/en/features.session.security.management.php#features.session.security.management.non-adaptive-session Why this security measure is important.
+     */
     private function handleStrict()
     {
         if (!ini_get('session.use_strict_mode') || headers_sent()) {
@@ -59,6 +96,13 @@ class Ssess implements \SessionHandlerInterface
         session_write_close();
     }
 
+    /**
+     * Opens the session.
+     *
+     * @param string $save_path The path where the session files will be saved.
+     * @param string $name The name of the session
+     * @return bool
+     */
     public function open($save_path, $name)
     {
         $this->savePath = $save_path;
@@ -69,11 +113,22 @@ class Ssess implements \SessionHandlerInterface
         return true;
     }
 
+    /**
+     * Closes the session
+     *
+     * @return bool
+     */
     public function close()
     {
         return true;
     }
 
+    /**
+     * Return the decrypted (but still serialized) data of the session.
+     *
+     * @param string $session_id Id of the session
+     * @return string Decrypted session data (still serialized)
+     */
     public function read($session_id)
     {
         $file_name = $this->getFileName($session_id);
@@ -84,18 +139,31 @@ class Ssess implements \SessionHandlerInterface
             return '';
         }
 
-        return $this->decode($session_id, $content);
+        return $this->decrypt($session_id, $content);
     }
 
+    /**
+     * Encrypts the session data and saves to the file;
+     *
+     * @param string $session_id Id of the session
+     * @param string $session_data Unencrypted session data
+     * @return bool
+     */
     public function write($session_id, $session_data)
     {
         $file_name = $this->getFileName($session_id);
 
-        $content = $this->encode($session_id, $session_data);
+        $content = $this->encrypt($session_id, $session_data);
 
         return file_put_contents("$this->savePath/$file_name", $content) !== false;
     }
 
+    /**
+     * Destroys the session file.
+     *
+     * @param string $session_id Id of the session
+     * @return bool
+     */
     public function destroy($session_id)
     {
         $file_name = $this->getFileName($session_id);
@@ -108,6 +176,14 @@ class Ssess implements \SessionHandlerInterface
         return true;
     }
 
+    /**
+     * Removes the files of expired sessions.
+     *
+     * (GC stands for Garbage Collector)
+     *
+     * @param int $maxlifetime The maximum time (in seconds) that a session file must be kept.
+     * @return bool
+     */
     public function gc($maxlifetime)
     {
         foreach (glob("$this->savePath/ssess_*") as $file) {
@@ -119,20 +195,34 @@ class Ssess implements \SessionHandlerInterface
         return true;
     }
 
-    private function encode($session_id, $session_data)
+    /**
+     * Encrypts the session data.
+     *
+     * @param string $session_id Id of the session
+     * @param string $session_data Serialized data to be encrypted.
+     * @return string
+     */
+    private function encrypt($session_id, $session_data)
     {
         $iv_length = openssl_cipher_iv_length($this->encryptionAlgorithm);
         $iv = openssl_random_pseudo_bytes($iv_length);
         $encryption_key = $this->getEncryptionKey($session_id);
         $encrypted_data = openssl_encrypt($session_data, $this->encryptionAlgorithm, $encryption_key, 0, $iv);
 
-        return json_encode([
+        return (string) json_encode([
             'data' => $encrypted_data,
             'iv' => base64_encode($iv)
         ]);
     }
 
-    private function decode($session_id, $content)
+    /**
+     * Decrypts the session data.
+     *
+     * @param string $session_id Id of the session
+     * @param string $content Encrypted session data
+     * @return string Decrypted session data
+     */
+    private function decrypt($session_id, $content)
     {
         $encrypted_data = json_decode($content);
 
@@ -146,13 +236,25 @@ class Ssess implements \SessionHandlerInterface
         return openssl_decrypt($encrypted_data->data, $this->encryptionAlgorithm, $encryption_key, 0, $iv);
     }
 
+    /**
+     * Gets the name of the session file
+     *
+     * @param string $session_id Id of the session
+     * @return string Name of the file (without the path)
+     */
     private function getFileName($session_id)
     {
         return 'ssess_'.openssl_digest($session_id, $this->hashAlgorithm);
     }
 
+    /**
+     * Calculates the key to be used in the session encryption.
+     *
+     * @param string $session_id Id of the session
+     * @return string Encryption key
+     */
     private function getEncryptionKey($session_id)
     {
-        return $this->appKey . openssl_digest($session_id, $this->hashAlgorithm);
+        return openssl_digest($this->appKey.$session_id, $this->hashAlgorithm);
     }
 }
