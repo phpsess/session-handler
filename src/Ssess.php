@@ -2,6 +2,11 @@
 
 namespace Ssess;
 
+use Ssess\Exception\UseStrictModeDisabledException;
+use Ssess\Exception\UseCookiesDisabledException;
+use Ssess\Exception\UseOnlyCookiesDisabledException;
+use Ssess\Exception\UseTransSidEnabledException;
+
 /**
  * Handles the session in a secure way.
  *
@@ -71,19 +76,19 @@ class Ssess implements \SessionHandlerInterface
         }
 
         if (!ini_get('session.use_cookies')) {
-            trigger_error('Insecure session config: session.use_cookies should be set to true', E_USER_WARNING);
+            throw new UseCookiesDisabledException();
         }
 
         if (!ini_get('session.use_only_cookies')) {
-            trigger_error('Insecure session config: session.use_only_cookies should be set to true', E_USER_WARNING);
+            throw new UseOnlyCookiesDisabledException();
         }
 
         if (ini_get('session.use_trans_sid')) {
-            trigger_error('Insecure session config: session.use_trans_id should be set to false', E_USER_WARNING);
+            throw new UseTransSidEnabledException();
         }
 
         if (!ini_get('session.use_strict_mode')) {
-            trigger_error('Insecure session config: session.use_strict_mode should be set to true', E_USER_WARNING);
+            throw new UseStrictModeDisabledException();
         }
     }
 
