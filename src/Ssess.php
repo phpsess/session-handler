@@ -13,8 +13,6 @@ namespace Ssess;
  * @todo Implement session locking (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-locking)
  * @todo Allow user to specify APP name so that session files from different applications never gets mixed
  * @todo Make tests
- * @todo Instruct users to set the session.use_strict_mode ini config
- * @todo Show what a session file looks like with and without encryption in README
  * @todo Option to lock session to IP
  * @todo Option to lock session to User Agent
  * @todo Option to lock session to Host
