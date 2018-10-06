@@ -11,8 +11,6 @@ namespace Ssess;
  *
  * @todo Implement timestamp based session (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-data-deletion)
  * @todo Implement session locking (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-locking)
- * @todo Allow user to specify hash algorithm
- * @todo Allow user to specify encryption algorithm
  * @todo Allow user to specify APP name so that session files from different applications never gets mixed
  * @todo Make tests
  * @todo Instruct users to set the session.use_strict_mode ini config
