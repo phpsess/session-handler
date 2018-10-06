@@ -95,9 +95,8 @@ class Ssess implements \SessionHandlerInterface
             return;
         }
 
-        session_start();
-        session_regenerate_id();
-        session_write_close();
+        $new_session_id = session_create_id();
+        session_id($new_session_id);
     }
 
     /**
