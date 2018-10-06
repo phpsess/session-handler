@@ -243,7 +243,7 @@ class Ssess implements \SessionHandlerInterface
      */
     private function getFileName($session_id)
     {
-        return 'ssess_'.openssl_digest($session_id, $this->hashAlgorithm);
+        return 'ssess_'.openssl_digest($session_id.$this->appKey, $this->hashAlgorithm);
     }
 
     /**
