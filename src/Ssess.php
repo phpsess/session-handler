@@ -20,6 +20,7 @@ use Ssess\Exception\UseTransSidEnabledException;
  * @todo Option to create session cookie with mutating random name
  * @todo Create a way to change encryption/hash algorithms over time without loosing previous sessions, to allow incremental security upgrades
  * @todo Provide a storage driver interface (such as file, mysqli, pdo, redis, memcached, etc)
+ * @todo Specify a better session directory and files permissions
  *
  * @package Ssess
  * @author Ayrton Fidelis <ayrton.vargas33@gmail.com>
@@ -111,8 +112,8 @@ class Ssess implements \SessionHandlerInterface
         $session_id = $_COOKIE[$cookie_name];
 
         $save_path = session_save_path();
-        if (!is_dir($save_path)) {
-            return;
+        if (!file_exists($save_path)) {
+            mkdir($save_path, 0777);
         }
 
         $file_name = $this->getFileName($session_id);
@@ -134,7 +135,7 @@ class Ssess implements \SessionHandlerInterface
     public function open($save_path, $name)
     {
         $this->savePath = $save_path;
-        if (!is_dir($this->savePath)) {
+        if (!file_exists($this->savePath) || !is_dir($this->savePath)) {
             mkdir($this->savePath, 0777);
         }
 
