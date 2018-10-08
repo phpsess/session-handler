@@ -6,6 +6,7 @@ use Ssess\Exception\UseStrictModeDisabledException;
 use Ssess\Exception\UseCookiesDisabledException;
 use Ssess\Exception\UseOnlyCookiesDisabledException;
 use Ssess\Exception\UseTransSidEnabledException;
+use Ssess\Storage\StorageInterface;
 
 /**
  * Handles the session in a secure way.
@@ -13,7 +14,6 @@ use Ssess\Exception\UseTransSidEnabledException;
  * @todo Implement timestamp based session (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-data-deletion)
  * @todo Implement session locking (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-locking)
  * @todo Allow user to specify APP name so that session files from different applications never gets mixed
- * @todo Make tests
  * @todo Option to lock session to IP
  * @todo Option to lock session to User Agent
  * @todo Option to lock session to Host
@@ -28,11 +28,6 @@ use Ssess\Exception\UseTransSidEnabledException;
 class Ssess implements \SessionHandlerInterface
 {
     /**
-     * @var string $savePath The full path where the session files are stored
-     */
-    private $savePath;
-
-    /**
      * @var string $appKey The hashed key of the app. This is only part of the key used to encrypt the session data.
      */
     private $appKey;
@@ -43,7 +38,7 @@ class Ssess implements \SessionHandlerInterface
     private $encryptionAlgorithm;
 
     /**
-     * @var string $hashAlgorithm The algorithm used to hash the keys and the session file name. For a list of available algorithms, use openssl_get_md_methods().
+     * @var string $hashAlgorithm The algorithm used to hash the keys and the session identifier. For a list of available algorithms, use openssl_get_md_methods().
      */
     private $hashAlgorithm;
 
@@ -53,6 +48,11 @@ class Ssess implements \SessionHandlerInterface
     public static $warnInsecureSettings = true;
 
     /**
+     * @var StorageInterface $storageDriver The driver used to store the session data.
+     */
+    private $storageDriver;
+
+    /**
      * Ssess constructor.
      *
      * It computes the app_key hash and calls the function that handles the strict mode.
@@ -60,16 +60,22 @@ class Ssess implements \SessionHandlerInterface
      * @param string $app_key The encryption key of the app. The hash of it will be used as part of the encryption key.
      * @param string $hash_algorithm The algorithm used to hash. For a list of available algorithms, use openssl_get_md_methods().
      * @param string $encryption_algorithm The algorithm used for encryption. For a list of available algorithms, use openssl_get_cipher_methods().
+     * @param StorageInterface $storage The driver used to store the session data.
      */
-    public function __construct($app_key, $hash_algorithm = 'sha512', $encryption_algorithm = 'aes128')
+    public function __construct($app_key, $hash_algorithm = 'sha512', $encryption_algorithm = 'aes128', $storage = NULL)
     {
         $this->hashAlgorithm = $hash_algorithm;
         $this->encryptionAlgorithm = $encryption_algorithm;
         $this->appKey = openssl_digest($app_key, $this->hashAlgorithm);
+        $this->storageDriver = $storage ? $storage : new Storage\FileStorage();
+
         $this->warnInsecureSettings();
         $this->handleStrict();
     }
 
+    /**
+     * Throws exceptions when insecure INI settings are detected.
+     */
     private function warnInsecureSettings()
     {
         if (!self::$warnInsecureSettings) {
@@ -111,13 +117,9 @@ class Ssess implements \SessionHandlerInterface
 
         $session_id = $_COOKIE[$cookie_name];
 
-        $save_path = session_save_path();
-        if (!file_exists($save_path)) {
-            mkdir($save_path, 0777);
-        }
+        $identifier = $this->getSessionIdentifier($session_id);
 
-        $file_name = $this->getFileName($session_id);
-        if (file_exists("$save_path/$file_name")) {
+        if ($this->storageDriver->sessionExists($identifier)) {
             return;
         }
 
@@ -134,11 +136,6 @@ class Ssess implements \SessionHandlerInterface
      */
     public function open($save_path, $name)
     {
-        $this->savePath = $save_path;
-        if (!file_exists($this->savePath) || !is_dir($this->savePath)) {
-            mkdir($this->savePath, 0777);
-        }
-
         return true;
     }
 
@@ -160,9 +157,9 @@ class Ssess implements \SessionHandlerInterface
      */
     public function read($session_id)
     {
-        $file_name = $this->getFileName($session_id);
+        $identifier = $this->getSessionIdentifier($session_id);
 
-        $content = @file_get_contents("$this->savePath/$file_name");
+        $content = $this->storageDriver->get($identifier);
 
         if (!$content) {
             return '';
@@ -172,7 +169,7 @@ class Ssess implements \SessionHandlerInterface
     }
 
     /**
-     * Encrypts the session data and saves to the file;
+     * Encrypts the session data and saves to the storage;
      *
      * @param string $session_id Id of the session
      * @param string $session_data Unencrypted session data
@@ -180,48 +177,37 @@ class Ssess implements \SessionHandlerInterface
      */
     public function write($session_id, $session_data)
     {
-        $file_name = $this->getFileName($session_id);
+        $identifier = $this->getSessionIdentifier($session_id);
 
         $content = $this->encrypt($session_id, $session_data);
 
-        return file_put_contents("$this->savePath/$file_name", $content) !== false;
+        return $this->storageDriver->save($identifier, $content);
     }
 
     /**
-     * Destroys the session file.
+     * Destroys the session.
      *
      * @param string $session_id Id of the session
      * @return bool
      */
     public function destroy($session_id)
     {
-        $file_name = $this->getFileName($session_id);
+        $identifier = $this->getSessionIdentifier($session_id);
 
-        $file = "$this->savePath/$file_name";
-        if (file_exists($file)) {
-            unlink($file);
-        }
-
-        return true;
+        return $this->storageDriver->destroy($identifier);
     }
 
     /**
-     * Removes the files of expired sessions.
+     * Removes the expired sessions from the storage.
      *
      * (GC stands for Garbage Collector)
      *
-     * @param int $maxlifetime The maximum time (in seconds) that a session file must be kept.
+     * @param int $max_life The maximum time (in seconds) that a session must be kept.
      * @return bool
      */
-    public function gc($maxlifetime)
+    public function gc($max_life)
     {
-        foreach (glob("$this->savePath/ssess_*") as $file) {
-            if (filemtime($file) + $maxlifetime < time() && file_exists($file)) {
-                unlink($file);
-            }
-        }
-
-        return true;
+        return $this->storageDriver->clearOld($max_life);
     }
 
     /**
@@ -266,14 +252,14 @@ class Ssess implements \SessionHandlerInterface
     }
 
     /**
-     * Gets the name of the session file
+     * Gets the string used to identify the stored session data.
      *
      * @param string $session_id Id of the session
-     * @return string Name of the file (without the path)
+     * @return string Session identifier
      */
-    private function getFileName($session_id)
+    private function getSessionIdentifier($session_id)
     {
-        return 'ssess_'.openssl_digest($session_id.$this->appKey, $this->hashAlgorithm);
+        return openssl_digest($session_id.$this->appKey, $this->hashAlgorithm);
     }
 
     /**
