@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Ssess\Ssess;
+use Ssess\CryptProvider\OpenSSLCryptProvider;
 use Ssess\Exception\UseStrictModeDisabledException;
 use Ssess\Exception\UseCookiesDisabledException;
 use Ssess\Exception\UseOnlyCookiesDisabledException;
@@ -68,7 +69,9 @@ final class SsessTest extends TestCase
 
         $this->expectException(UseStrictModeDisabledException::class);
 
-        new Ssess('testKey');
+        $crypt_provider = new OpenSSLCryptProvider('testKey');
+
+        new Ssess($crypt_provider);
     }
 
     public function testWarnUseCookiesDisabled()
@@ -79,7 +82,9 @@ final class SsessTest extends TestCase
 
         $this->expectException(UseCookiesDisabledException::class);
 
-        new Ssess('testKey');
+        $crypt_provider = new OpenSSLCryptProvider('testKey');
+
+        new Ssess($crypt_provider);
     }
 
     public function testWarnUseOnlyCookiesDisabled()
@@ -90,7 +95,9 @@ final class SsessTest extends TestCase
 
         $this->expectException(UseOnlyCookiesDisabledException::class);
 
-        new Ssess('testKey');
+        $crypt_provider = new OpenSSLCryptProvider('testKey');
+
+        new Ssess($crypt_provider);
     }
 
     public function testWarnUseTransSidEnabled()
@@ -101,7 +108,9 @@ final class SsessTest extends TestCase
 
         $this->expectException(UseTransSidEnabledException::class);
 
-        new Ssess('testKey');
+        $crypt_provider = new OpenSSLCryptProvider('testKey');
+
+        new Ssess($crypt_provider);
     }
 
     public function testDisabledWarnInsecureSettings()
@@ -115,8 +124,10 @@ final class SsessTest extends TestCase
 
         Ssess::$warnInsecureSettings = false;
 
+        $crypt_provider = new OpenSSLCryptProvider('testKey');
+
         try {
-            new Ssess('testKey');
+            new Ssess($crypt_provider);
             $did_not_throw_errors = true;
         } catch(Exception $e) {
             $did_not_throw_errors = false;
@@ -192,7 +203,9 @@ final class SsessTest extends TestCase
 
     private function initSecureSession($key = 'testKey')
     {
-        $ssess = new Ssess($key);
+        $crypt_provider = new OpenSSLCryptProvider($key);
+
+        $ssess = new Ssess($crypt_provider);
 
         session_set_save_handler($ssess);
 
