@@ -5,6 +5,15 @@ namespace Ssess\CryptProvider;
 interface CryptProviderInterface {
 
     /**
+     * CryptProviderInterface constructor.
+     *
+     * @param string $app_key Defines the App Key.
+     * @param string $hash_algorithm Defines the algorithm used to create hashes.
+     * @param string $encryption_algorithm Defines the algorithm to encrypt/decrypt data.
+     */
+    public function __construct($app_key, $hash_algorithm, $encryption_algorithm);
+
+    /**
      * Makes a session identifier based on the session id.
      *
      * @param string $session_id The session id.

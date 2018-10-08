@@ -5,12 +5,28 @@ namespace Ssess\CryptProvider;
 class OpenSSLCryptProvider implements CryptProviderInterface
 {
 
+    /**
+     * @var string $appKey The hashed app key.
+     */
     private $appKey;
 
+    /**
+     * @var string $hashAlgorithm The hashing algorithm.
+     */
     private $hashAlgorithm;
 
+    /**
+     * @var string $encryptionAlgorithm The encryption/decryption algorithm.
+     */
     private $encryptionAlgorithm;
 
+    /**
+     * CryptProviderInterface constructor.
+     *
+     * @param string $app_key Defines the App Key.
+     * @param string $hash_algorithm Defines the algorithm used to create hashes.
+     * @param string $encryption_algorithm Defines the algorithm to encrypt/decrypt data.
+     */
     public function __construct($app_key, $hash_algorithm = 'sha512', $encryption_algorithm = 'aes128')
     {
         $this->hashAlgorithm = $hash_algorithm;
