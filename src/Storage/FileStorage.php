@@ -73,13 +73,17 @@ class FileStorage implements StorageInterface
     public function clearOld($max_life)
     {
         $files = glob("$this->filePath/$this->filePrefix*");
+        $has_error = false;
         foreach ($files as $file) {
-            if (filemtime($file) + $max_life < time() && file_exists($file)) {
-                unlink($file);
+            if (filemtime($file) + $max_life > time()) {
+                continue;
+            }
+            if (!unlink($file)) {
+                $has_error = true;
             }
         }
 
-        return true;
+        return !$has_error;
     }
 
     /**
