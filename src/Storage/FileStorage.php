@@ -2,6 +2,11 @@
 
 namespace Ssess\Storage;
 
+use Ssess\Exception\SessionNotFoundException;
+use Ssess\Exception\UnableToDeleteException;
+use Ssess\Exception\UnableToFetchException;
+use Ssess\Exception\UnableToSaveException;
+
 /**
  * Uses the filesystem to store the session data.
  *
@@ -42,14 +47,26 @@ class FileStorage implements StorageInterface
     {
         $file_name = $this->getFileName($session_identifier);
 
-        return file_put_contents($file_name, $session_data) !== false;
+        if (file_put_contents($file_name, $session_data) === false) {
+            throw new UnableToSaveException();
+        }
     }
 
     public function get($session_identifier)
     {
         $file_name = $this->getFileName($session_identifier);
 
-        return (string) @file_get_contents($file_name);
+        if (!$this->sessionExists($session_identifier)) {
+            throw new SessionNotFoundException();
+        }
+
+        try {
+            $contents = (string) file_get_contents($file_name);
+        } catch (\Exception $e) {
+            throw new UnableToFetchException();
+        }
+
+        return $contents;
     }
 
     public function sessionExists($session_identifier)
@@ -61,13 +78,15 @@ class FileStorage implements StorageInterface
 
     public function destroy($session_identifier)
     {
-        $file_name = $this->getFileName($session_identifier);
-
-        if (!file_exists($file_name)) {
-            return true;
+        if (!$this->sessionExists($session_identifier)) {
+            throw new SessionNotFoundException();
         }
 
-        return unlink($file_name);
+        $file_name = $this->getFileName($session_identifier);
+
+        if (!unlink($file_name)) {
+            throw new UnableToDeleteException();
+        }
     }
 
     public function clearOld($max_life)
@@ -83,7 +102,9 @@ class FileStorage implements StorageInterface
             }
         }
 
-        return !$has_error;
+        if ($has_error) {
+            throw new UnableToDeleteException();
+        }
     }
 
     /**

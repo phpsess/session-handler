@@ -13,15 +13,18 @@ interface StorageInterface {
     /**
      * Saves the encrypted session data to the storage.
      *
+     * @throws \Ssess\Exception\UnableToSaveException
      * @param string $session_identifier The string used to identify the session data.
      * @param string $session_data The encrypted session data.
-     * @return boolean Success or failure.
+     * @return void
      */
     public function save($session_identifier, $session_data);
 
     /**
      * Fetches the encrypted session data based on the session identifier.
      *
+     * @throws \Ssess\Exception\SessionNotFoundException
+     * @throws \Ssess\Exception\UnableToFetchException
      * @param string $session_identifier The session identifier
      * @return string The encrypted session data
      */
@@ -38,16 +41,19 @@ interface StorageInterface {
     /**
      * Remove this session from the storage.
      *
+     * @throws \Ssess\Exception\SessionNotFoundException
+     * @throws \Ssess\Exception\UnableToDeleteException
      * @param string $session_identifier The session identifier.
-     * @return boolean
+     * @return void
      */
     public function destroy($session_identifier);
 
     /**
      * Removes the session older than the specified time from the storage.
      *
+     * @throws \Ssess\Exception\UnableToDeleteException
      * @param int $max_life The maximum time (in seconds) that a session file must be kept.
-     * @return boolean
+     * @return void
      */
     public function clearOld($max_life);
 }

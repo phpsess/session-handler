@@ -2,6 +2,8 @@
 
 namespace Ssess\Storage;
 
+use Ssess\Exception\SessionNotFoundException;
+
 /**
  * Uses an array to mock the session data.
  *
@@ -19,15 +21,14 @@ class MockStorage implements StorageInterface
             'data' => $session_data,
             'time' => time()
         );
-
-        return true;
     }
 
     public function get($session_identifier)
     {
-        if (!isset(self::$files[$session_identifier])) {
-            return '';
+        if (!$this->sessionExists($session_identifier)) {
+            throw new SessionNotFoundException();
         }
+
         return self::$files[$session_identifier]['data'];
     }
 
@@ -39,8 +40,6 @@ class MockStorage implements StorageInterface
     public function destroy($session_identifier)
     {
         unset(self::$files[$session_identifier]);
-
-        return true;
     }
 
     public function clearOld($max_life)
@@ -52,8 +51,6 @@ class MockStorage implements StorageInterface
         }
 
         self::$files = array_filter(self::$files);
-
-        return true;
     }
 
 }

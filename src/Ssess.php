@@ -146,8 +146,11 @@ class Ssess implements \SessionHandlerInterface
     {
         $identifier = $this->cryptProvider->makeSessionIdentifier($session_id);
 
-        $content = $this->storageDriver->get($identifier);
+        if (!$this->storageDriver->sessionExists($identifier)) {
+            return '';
+        }
 
+        $content = $this->storageDriver->get($identifier);
         if (!$content) {
             return '';
         }
@@ -160,7 +163,7 @@ class Ssess implements \SessionHandlerInterface
      *
      * @param string $session_id Id of the session
      * @param string $session_data Unencrypted session data
-     * @return bool
+     * @return boolean
      */
     public function write($session_id, $session_data)
     {
@@ -168,7 +171,12 @@ class Ssess implements \SessionHandlerInterface
 
         $content = $this->cryptProvider->encryptSessionData($session_id, $session_data);
 
-        return $this->storageDriver->save($identifier, $content);
+        try {
+            $this->storageDriver->save($identifier, $content);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**
@@ -181,7 +189,12 @@ class Ssess implements \SessionHandlerInterface
     {
         $identifier = $this->cryptProvider->makeSessionIdentifier($session_id);
 
-        return $this->storageDriver->destroy($identifier);
+        try {
+            $this->storageDriver->destroy($identifier);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 
     /**
@@ -194,6 +207,11 @@ class Ssess implements \SessionHandlerInterface
      */
     public function gc($max_life)
     {
-        return $this->storageDriver->clearOld($max_life);
+        try {
+            $this->storageDriver->clearOld($max_life);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }
