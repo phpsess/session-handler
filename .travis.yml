@@ -5,6 +5,9 @@ php:
   - '7.2'
   - nightly
 
+matrix:
+  allow_failures:
+    - php: nightly
 env:
   global:
   - CC_TEST_REPORTER_ID=0ecfddb624f758528c5754e479656c0edc9e20d44968e80e378e5d6f41880a8f
