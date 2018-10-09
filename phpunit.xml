@@ -18,7 +18,7 @@
         stopOnIncomplete="false"
         stopOnSkipped="false"
         stopOnRisky="false"
-        testSuiteLoaderClass="./tests/*Test.php"
+        testSuiteLoaderFile="./tests/*Test.php"
         timeoutForSmallTests="1"
         timeoutForMediumTests="10"
         timeoutForLargeTests="60"
