@@ -7,6 +7,8 @@ interface CryptProviderInterface {
     /**
      * CryptProviderInterface constructor.
      *
+     * @throws \Ssess\Exception\UnknownEncryptionAlgorithmException
+     * @throws \Ssess\Exception\UnknownHashAlgorithmException
      * @param string $app_key Defines the App Key.
      * @param string $hash_algorithm Defines the algorithm used to create hashes.
      * @param string $encryption_algorithm Defines the algorithm to encrypt/decrypt data.
