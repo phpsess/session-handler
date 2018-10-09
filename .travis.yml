@@ -10,5 +10,5 @@ php:
   - hhvm
   - nightly
 
-scripts:
+script:
   - composer install
