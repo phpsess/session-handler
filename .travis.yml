@@ -16,7 +16,7 @@ env:
 
 before_script:
   - echo $TRAVIS_PHP_VERSION
-  - $(if ["$TRAVIS_PHP_VERSION" == "nightly"]; then pecl install xdebug; fi)
+  - if [ "$TRAVIS_PHP_VERSION" == "nightly" ]; then pecl install xdebug fi
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
