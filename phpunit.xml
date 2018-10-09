@@ -18,7 +18,8 @@
         stopOnIncomplete="false"
         stopOnSkipped="false"
         stopOnRisky="false"
-        testSuiteLoaderClass="tests"
+        <!--testSuiteLoaderClass="PHPUnit\Runner\StandardTestSuiteLoader"-->
+        testSuiteLoaderFile="./tests"
         timeoutForSmallTests="1"
         timeoutForMediumTests="10"
         timeoutForLargeTests="60"
