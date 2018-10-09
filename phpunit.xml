@@ -18,9 +18,13 @@
         stopOnIncomplete="false"
         stopOnSkipped="false"
         stopOnRisky="false"
-        testSuiteLoaderFile="./tests/*Test.php"
+        testSuiteLoaderClass="PHPUnit\Runner\StandardTestSuiteLoader"
         timeoutForSmallTests="1"
         timeoutForMediumTests="10"
         timeoutForLargeTests="60"
-        verbose="false">
+        verbose="false"><testsuites>
+    <testsuite name="My package's test suit">
+        <directory>./tests/</directory>
+    </testsuite>
+</testsuites>
 </phpunit>
