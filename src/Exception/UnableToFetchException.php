@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ssess\Exception;
 
 class UnableToFetchException extends \RuntimeException

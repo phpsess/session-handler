@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ssess\CryptProvider;
 
 interface CryptProviderInterface {
@@ -10,10 +12,10 @@ interface CryptProviderInterface {
      * @throws \Ssess\Exception\UnknownEncryptionAlgorithmException
      * @throws \Ssess\Exception\UnknownHashAlgorithmException
      * @param string $app_key Defines the App Key.
-     * @param string $hash_algorithm Defines the algorithm used to create hashes.
-     * @param string $encryption_algorithm Defines the algorithm to encrypt/decrypt data.
+     * @param string|null $hash_algorithm Defines the algorithm used to create hashes.
+     * @param string|null $encryption_algorithm Defines the algorithm to encrypt/decrypt data.
      */
-    public function __construct($app_key, $hash_algorithm, $encryption_algorithm);
+    public function __construct(string $app_key, ?string $hash_algorithm, ?string $encryption_algorithm);
 
     /**
      * Makes a session identifier based on the session id.
@@ -21,7 +23,7 @@ interface CryptProviderInterface {
      * @param string $session_id The session id.
      * @return string The session identifier.
      */
-    public function makeSessionIdentifier($session_id);
+    public function makeSessionIdentifier(string $session_id): string ;
 
     /**
      * Encrypts the session data.
@@ -30,14 +32,15 @@ interface CryptProviderInterface {
      * @param string $session_data The session data.
      * @return string The encrypted session data.
      */
-    public function encryptSessionData($session_id, $session_data);
+    public function encryptSessionData(string $session_id, string $session_data): string ;
 
     /**
      * Decrypts the session data.
      *
+     * @throws \Ssess\Exception\UnableToDecryptException
      * @param string $session_id The session id.
      * @param string $session_data The encrypted session data.
      * @return string The decrypted session data.
      */
-    public function decryptSessionData($session_id, $session_data);
+    public function decryptSessionData(string $session_id, string $session_data): string ;
 }

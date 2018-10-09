@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Ssess\CryptProvider\OpenSSLCryptProvider;
 use Ssess\Exception\UnknownHashAlgorithmException;
 use Ssess\Exception\UnknownEncryptionAlgorithmException;
+use Ssess\Exception\UnableToDecryptException;
 
 use PHPUnit\Framework\TestCase;
 
@@ -72,9 +73,9 @@ final class OpenSSLCryptProviderTest extends TestCase
 
         $encrypted_data = $crypt_provider->encryptSessionData('original_session_id', $data);
 
-        $decrypted_data = $crypt_provider->decryptSessionData('wrong_session_id', $encrypted_data);
+        $this->expectException(UnableToDecryptException::class);
 
-        $this->assertEquals($decrypted_data, '');
+        $crypt_provider->decryptSessionData('wrong_session_id', $encrypted_data);
     }
 
     public function testCanDecryptWithNewInstance()
@@ -108,8 +109,8 @@ final class OpenSSLCryptProviderTest extends TestCase
 
         $new_crypt_provider = new OpenSSLCryptProvider('wrong_key');
 
-        $decrypted_data = $new_crypt_provider->decryptSessionData($session_id, $encrypted_data);
+        $this->expectException(UnableToDecryptException::class);
 
-        $this->assertEquals($decrypted_data, '');
+        $new_crypt_provider->decryptSessionData($session_id, $encrypted_data);
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ssess;
 
 use Ssess\CryptProvider\CryptProviderInterface;
@@ -48,10 +50,10 @@ class Ssess implements \SessionHandlerInterface
      *
      * It computes the app_key hash and calls the function that handles the strict mode.
      *
-     * @param CryptProviderInterface $crypt_provider The driver used to deal with encryption/decryption/hashing.
-     * @param StorageInterface $storage The driver used to store the session data.
+     * @param CryptProviderInterface|null $crypt_provider The driver used to deal with encryption/decryption/hashing.
+     * @param StorageInterface|null $storage The driver used to store the session data.
      */
-    public function __construct($crypt_provider, $storage = NULL)
+    public function __construct(?CryptProviderInterface $crypt_provider, ?StorageInterface $storage = NULL)
     {
         $this->cryptProvider = $crypt_provider;
         $this->storageDriver = $storage ? $storage : new Storage\FileStorage();
@@ -62,8 +64,14 @@ class Ssess implements \SessionHandlerInterface
 
     /**
      * Throws exceptions when insecure INI settings are detected.
+     *
+     * @throws UseCookiesDisabledException
+     * @throws UseOnlyCookiesDisabledException
+     * @throws UseTransSidEnabledException
+     * @throws UseStrictModeDisabledException
+     * @return void
      */
-    private function warnInsecureSettings()
+    private function warnInsecureSettings(): void
     {
         if (!self::$warnInsecureSettings) {
             return;
@@ -90,8 +98,9 @@ class Ssess implements \SessionHandlerInterface
      * Rejects arbitrary session ids.
      *
      * @see http://php.net/manual/en/features.session.security.management.php#features.session.security.management.non-adaptive-session Why this security measure is important.
+     * @return void
      */
-    private function handleStrict()
+    private function handleStrict(): void
     {
         if (!ini_get('session.use_strict_mode') || headers_sent()) {
             return;
@@ -118,10 +127,10 @@ class Ssess implements \SessionHandlerInterface
      * Opens the session.
      *
      * @param string $save_path The path where the session files will be saved.
-     * @param string $name The name of the session
+     * @param string $session_name The name of the session
      * @return bool
      */
-    public function open($save_path, $name)
+    public function open($save_path, $session_name): bool
     {
         return true;
     }
@@ -131,7 +140,7 @@ class Ssess implements \SessionHandlerInterface
      *
      * @return bool
      */
-    public function close()
+    public function close(): bool
     {
         return true;
     }
@@ -142,7 +151,7 @@ class Ssess implements \SessionHandlerInterface
      * @param string $session_id Id of the session
      * @return string Decrypted session data (still serialized)
      */
-    public function read($session_id)
+    public function read($session_id): string
     {
         $identifier = $this->cryptProvider->makeSessionIdentifier($session_id);
 
@@ -165,7 +174,7 @@ class Ssess implements \SessionHandlerInterface
      * @param string $session_data Unencrypted session data
      * @return boolean
      */
-    public function write($session_id, $session_data)
+    public function write($session_id, $session_data): bool
     {
         $identifier = $this->cryptProvider->makeSessionIdentifier($session_id);
 
@@ -185,7 +194,7 @@ class Ssess implements \SessionHandlerInterface
      * @param string $session_id Id of the session
      * @return bool
      */
-    public function destroy($session_id)
+    public function destroy($session_id): bool
     {
         $identifier = $this->cryptProvider->makeSessionIdentifier($session_id);
 
@@ -205,7 +214,7 @@ class Ssess implements \SessionHandlerInterface
      * @param int $max_life The maximum time (in seconds) that a session must be kept.
      * @return bool
      */
-    public function gc($max_life)
+    public function gc($max_life): bool
     {
         try {
             $this->storageDriver->clearOld($max_life / 1000);

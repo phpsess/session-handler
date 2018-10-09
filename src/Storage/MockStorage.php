@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Ssess\Storage;
 
 use Ssess\Exception\SessionNotFoundException;
@@ -26,7 +28,7 @@ class MockStorage implements StorageInterface
      * @param string $session_data The encrypted session data.
      * @return void
      */
-    public function save($session_identifier, $session_data)
+    public function save(string $session_identifier, string $session_data): void
     {
         self::$files[$session_identifier] = array(
             'data' => $session_data,
@@ -42,7 +44,7 @@ class MockStorage implements StorageInterface
      * @param string $session_identifier The session identifier
      * @return string The encrypted session data
      */
-    public function get($session_identifier)
+    public function get(string $session_identifier): string
     {
         if (!$this->sessionExists($session_identifier)) {
             throw new SessionNotFoundException();
@@ -57,7 +59,7 @@ class MockStorage implements StorageInterface
      * @param string $session_identifier The session identifier.
      * @return boolean Whether the session exists or not.
      */
-    public function sessionExists($session_identifier)
+    public function sessionExists(string $session_identifier): bool
     {
         return isset(self::$files[$session_identifier]);
     }
@@ -70,7 +72,7 @@ class MockStorage implements StorageInterface
      * @param string $session_identifier The session identifier.
      * @return void
      */
-    public function destroy($session_identifier)
+    public function destroy(string $session_identifier): void
     {
         unset(self::$files[$session_identifier]);
     }
@@ -82,7 +84,7 @@ class MockStorage implements StorageInterface
      * @param float $max_life The maximum time (in milliseconds) that a session file must be kept.
      * @return void
      */
-    public function clearOld($max_life)
+    public function clearOld(float $max_life): void
     {
         foreach (self::$files as &$file) {
             if ($file['time'] + $max_life < microtime(true)) {
