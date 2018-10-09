@@ -1,11 +1,12 @@
 {
     "name": "ayrtonvwf/ssess",
-    "description": "A PHP session handler that encrypts the session data.",
+    "description": "A security-first PHP session handler",
     "type": "library",
+    "version": "0.0.1-beta",
     "require": {
         "ext-openssl": "*",
         "ext-json": "*",
-        "php": "^7.1"
+        "php": ">=7.1"
     },
     "license": "MIT",
     "authors": [
