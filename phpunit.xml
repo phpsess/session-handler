@@ -18,7 +18,7 @@
         stopOnIncomplete="false"
         stopOnSkipped="false"
         stopOnRisky="false"
-        testSuiteLoaderFile="./tests"
+        testSuiteLoaderClass="./tests"
         timeoutForSmallTests="1"
         timeoutForMediumTests="10"
         timeoutForLargeTests="60"
