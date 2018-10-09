@@ -2,6 +2,7 @@
 
 namespace Ssess\CryptProvider;
 
+use Ssess\Exception\OpenSSLNotLoadedException;
 use Ssess\Exception\UnknownEncryptionAlgorithmException;
 use Ssess\Exception\UnknownHashAlgorithmException;
 
@@ -26,6 +27,7 @@ class OpenSSLCryptProvider implements CryptProviderInterface
     /**
      * CryptProviderInterface constructor.
      *
+     * @throws \Ssess\Exception\OpenSSLNotLoadedException
      * @throws \Ssess\Exception\UnknownEncryptionAlgorithmException
      * @throws \Ssess\Exception\UnknownHashAlgorithmException
      * @param string $app_key Defines the App Key.
@@ -36,6 +38,10 @@ class OpenSSLCryptProvider implements CryptProviderInterface
     {
         $this->hashAlgorithm = $hash_algorithm;
         $this->encryptionAlgorithm = $encryption_algorithm;
+
+        if (!extension_loaded('openssl')) {
+            throw new OpenSSLNotLoadedException();
+        }
 
         $known_hash_algorithms = openssl_get_md_methods(true);
         if (!in_array($hash_algorithm, $known_hash_algorithms)) {
