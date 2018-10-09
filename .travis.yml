@@ -9,6 +9,3 @@ php:
   - '7.2'
   - hhvm
   - nightly
-
-script:
-  - composer test
