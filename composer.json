@@ -4,7 +4,8 @@
     "type": "library",
     "require": {
         "ext-openssl": "*",
-        "ext-json": "*"
+        "ext-json": "*",
+        "php": "^7.1"
     },
     "license": "MIT",
     "authors": [
