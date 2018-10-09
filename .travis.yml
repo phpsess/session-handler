@@ -5,6 +5,11 @@ php:
   - '7.2'
   - nightly
 
+env:
+  global:
+  - CC_TEST_REPORTER_ID=0ecfddb624f758528c5754e479656c0edc9e20d44968e80e378e5d6f41880a8f
+  - GIT_COMMITTED_AT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then git log -1 --pretty=format:%ct; else git log -1 --skip 1 --pretty=format:%ct; fi)
+
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
