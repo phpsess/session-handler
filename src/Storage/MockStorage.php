@@ -19,7 +19,7 @@ class MockStorage implements StorageInterface
     {
         self::$files[$session_identifier] = array(
             'data' => $session_data,
-            'time' => time()
+            'time' => microtime(true)
         );
     }
 
@@ -45,7 +45,7 @@ class MockStorage implements StorageInterface
     public function clearOld($max_life)
     {
         foreach (self::$files as &$file) {
-            if ($file['time'] + $max_life < time()) {
+            if ($file['time'] + $max_life < microtime(true)) {
                 $file = null;
             }
         }

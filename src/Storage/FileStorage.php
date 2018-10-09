@@ -2,7 +2,10 @@
 
 namespace Ssess\Storage;
 
+use Ssess\Exception\DirectoryNotReadableException;
+use Ssess\Exception\DirectoryNotWritableException;
 use Ssess\Exception\SessionNotFoundException;
+use Ssess\Exception\UnableToCreateDirectoryException;
 use Ssess\Exception\UnableToDeleteException;
 use Ssess\Exception\UnableToFetchException;
 use Ssess\Exception\UnableToSaveException;
@@ -29,6 +32,9 @@ class FileStorage implements StorageInterface
     /**
      * FileStorage constructor.
      *
+     * @throws DirectoryNotReadableException
+     * @throws DirectoryNotWritableException
+     * @throws UnableToCreateDirectoryException
      * @param string $file_path The absolute path to the session files directory. If not set, defaults to INI session.save_path.
      * @param string $file_prefix The prefix used in the session file name.
      */
@@ -37,7 +43,17 @@ class FileStorage implements StorageInterface
         $this->filePath = $file_path ? $file_path : ini_get('session.save_path');
 
         if (!file_exists($this->filePath)) {
-            mkdir($this->filePath, 0777);
+            if (!mkdir($this->filePath, 0777)) {
+                throw new UnableToCreateDirectoryException();
+            }
+        }
+
+        if (!is_readable($this->filePath)) {
+            throw new DirectoryNotReadableException();
+        }
+
+        if (!is_writable($this->filePath)) {
+            throw new DirectoryNotWritableException();
         }
 
         $this->filePrefix = $file_prefix;
@@ -47,7 +63,12 @@ class FileStorage implements StorageInterface
     {
         $file_name = $this->getFileName($session_identifier);
 
-        if (file_put_contents($file_name, $session_data) === false) {
+        $contents = json_encode(array(
+            'data' => $session_data,
+            'time' => microtime(true)
+        ));
+
+        if (file_put_contents($file_name, $contents) === false) {
             throw new UnableToSaveException();
         }
     }
@@ -66,12 +87,20 @@ class FileStorage implements StorageInterface
             throw new UnableToFetchException();
         }
 
-        return $contents;
+        $data = json_decode($contents);
+
+        if (json_last_error() !== JSON_ERROR_NONE || !isset($data->data)) {
+            throw new UnableToFetchException();
+        }
+
+        return $data->data;
     }
 
     public function sessionExists($session_identifier)
     {
         $file_name = $this->getFileName($session_identifier);
+
+        clearstatcache($file_name);
 
         return file_exists($file_name);
     }
@@ -87,6 +116,8 @@ class FileStorage implements StorageInterface
         if (!unlink($file_name)) {
             throw new UnableToDeleteException();
         }
+
+        clearstatcache($file_name);
     }
 
     public function clearOld($max_life)
@@ -94,9 +125,12 @@ class FileStorage implements StorageInterface
         $files = glob("$this->filePath/$this->filePrefix*");
         $has_error = false;
         foreach ($files as $file) {
-            if (filemtime($file) + $max_life > time()) {
+            $content = json_decode(file_get_contents($file));
+
+            if ($content->time + $max_life > microtime(true)) {
                 continue;
             }
+
             if (!unlink($file)) {
                 $has_error = true;
             }

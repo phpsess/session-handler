@@ -52,7 +52,7 @@ interface StorageInterface {
      * Removes the session older than the specified time from the storage.
      *
      * @throws \Ssess\Exception\UnableToDeleteException
-     * @param int $max_life The maximum time (in seconds) that a session file must be kept.
+     * @param float $max_life The maximum time (in milliseconds) that a session file must be kept.
      * @return void
      */
     public function clearOld($max_life);

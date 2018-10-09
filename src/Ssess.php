@@ -208,7 +208,7 @@ class Ssess implements \SessionHandlerInterface
     public function gc($max_life)
     {
         try {
-            $this->storageDriver->clearOld($max_life);
+            $this->storageDriver->clearOld($max_life / 1000);
             return true;
         } catch (\Exception $e) {
             return false;

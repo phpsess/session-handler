@@ -6,25 +6,41 @@ use Ssess\Storage\FileStorage;
 
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @runTestsInSeparateProcesses
+ */
 final class FileStorageTest extends TestCase
 {
 
-    public static function setUpBeforeClass()
+    public function setUp()
     {
-        $file_storage = new FileStorage();
+        $current_path = getcwd();
+        $folder = 'temp_session_' . self::class . '_' . $this->getName();
 
-        $file_storage->clearOld(0);
+        ini_set('session.save_path', "$current_path/$folder");
 
-        parent::setUpBeforeClass();
+        parent::setUp();
     }
 
-    public static function tearDownAfterClass()
+    public function tearDown()
     {
-        $file_storage = new FileStorage();
+        $session_path = session_save_path();
 
-        $file_storage->clearOld(0);
+        if (!file_exists($session_path)) {
+            return;
+        }
 
-        parent::tearDownAfterClass();
+        session_write_close();
+
+        $session_files = glob("$session_path/*");
+
+        foreach ($session_files as $session_file) {
+            unlink($session_file);
+        }
+
+        rmdir($session_path);
+
+        parent::tearDown();
     }
 
     public function testSaveThenGet()
@@ -65,10 +81,13 @@ final class FileStorageTest extends TestCase
 
         $identifier = $this->getName();
 
-        $file_storage->destroy($identifier);
         if ($file_storage->sessionExists($identifier)) {
-            $this->fail('Cant assure session does not exist');
+            $file_storage->destroy($identifier);
         }
+
+        $exists = $file_storage->sessionExists($identifier);
+
+        $this->assertFalse($exists);
 
         $file_storage->save($identifier, 'test');
 
@@ -84,9 +103,10 @@ final class FileStorageTest extends TestCase
         $identifier = $this->getName();
 
         $file_storage->save($identifier, 'test');
-        if (!$file_storage->sessionExists($identifier)) {
-            $this->fail('Cant create session to destroy');
-        }
+
+        $exists = $file_storage->sessionExists($identifier);
+
+        $this->assertTrue($exists);
 
         $file_storage->destroy($identifier);
 
@@ -103,7 +123,11 @@ final class FileStorageTest extends TestCase
 
         $file_storage->save($identifier, 'test');
 
-        sleep(3);
+        sleep(1);
+
+        $exists = $file_storage->sessionExists($identifier);
+
+        $this->assertTrue($exists);
 
         $file_storage->clearOld(1);
 
@@ -120,9 +144,11 @@ final class FileStorageTest extends TestCase
 
         $file_storage->save($identifier, 'test');
 
-        sleep(1);
+        $exists = $file_storage->sessionExists($identifier);
 
-        $file_storage->clearOld(2);
+        $this->assertTrue($exists);
+
+        $file_storage->clearOld(1);
 
         $exists = $file_storage->sessionExists($identifier);
 
