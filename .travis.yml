@@ -3,11 +3,11 @@ language: php
 php:
   - '7.1'
   - '7.2'
-  - '7.3'
+  - '7.3.0RC2'
 
 matrix:
   allow_failures:
-    - php: '7.3'
+    - php: '7.3.0RC2'
 
 env:
   global:
@@ -15,7 +15,7 @@ env:
   - GIT_COMMITTED_AT=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then git log -1 --pretty=format:%ct; else git log -1 --skip 1 --pretty=format:%ct; fi)
 
 before_script:
-#  - if [ "$TRAVIS_PHP_VERSION" == "7.3" ]; then pecl install xdebug-beta; fi
+#  - if [ "$TRAVIS_PHP_VERSION" == "7.3.0RC2" ]; then pecl install xdebug-beta; fi
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - ./cc-test-reporter before-build
