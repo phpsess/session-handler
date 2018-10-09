@@ -1,6 +1,8 @@
 # SSess
 A security-first PHP session handler
 
+[![Build Status](https://travis-ci.com/ayrtonvwf/ssess.svg?branch=master)](https://travis-ci.com/ayrtonvwf/ssess)
+
 ## What it does
 - Encrypts the session data in such a way that even if you have access to the session files,
 the source code AND the app-key, you wouldn't be able to decrypt it;
