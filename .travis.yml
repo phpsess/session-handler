@@ -12,3 +12,4 @@ php:
 
 script:
   - composer install
+  - phpunit
