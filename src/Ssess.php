@@ -50,10 +50,10 @@ class Ssess implements \SessionHandlerInterface
      *
      * It computes the app_key hash and calls the function that handles the strict mode.
      *
-     * @param CryptProviderInterface|null $crypt_provider The driver used to deal with encryption/decryption/hashing.
+     * @param CryptProviderInterface $crypt_provider The driver used to deal with encryption/decryption/hashing.
      * @param StorageInterface|null $storage The driver used to store the session data.
      */
-    public function __construct(?CryptProviderInterface $crypt_provider, ?StorageInterface $storage = NULL)
+    public function __construct(CryptProviderInterface $crypt_provider, ?StorageInterface $storage = NULL)
     {
         $this->cryptProvider = $crypt_provider;
         $this->storageDriver = $storage ? $storage : new Storage\FileStorage();

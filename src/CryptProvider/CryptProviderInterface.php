@@ -12,10 +12,10 @@ interface CryptProviderInterface {
      * @throws \Ssess\Exception\UnknownEncryptionAlgorithmException
      * @throws \Ssess\Exception\UnknownHashAlgorithmException
      * @param string $app_key Defines the App Key.
-     * @param string|null $hash_algorithm Defines the algorithm used to create hashes.
-     * @param string|null $encryption_algorithm Defines the algorithm to encrypt/decrypt data.
+     * @param string $hash_algorithm Defines the algorithm used to create hashes.
+     * @param string $encryption_algorithm Defines the algorithm to encrypt/decrypt data.
      */
-    public function __construct(string $app_key, ?string $hash_algorithm, ?string $encryption_algorithm);
+    public function __construct(string $app_key, string $hash_algorithm, string $encryption_algorithm);
 
     /**
      * Makes a session identifier based on the session id.

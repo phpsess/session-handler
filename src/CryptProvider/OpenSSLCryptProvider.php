@@ -9,6 +9,7 @@ use Ssess\Exception\UnableToDecryptException;
 use Ssess\Exception\UnknownEncryptionAlgorithmException;
 use Ssess\Exception\UnknownHashAlgorithmException;
 use Ssess\Exception\UnableToHashException;
+use Ssess\Exception\UnableToGenerateRandomnessException;
 
 class OpenSSLCryptProvider implements CryptProviderInterface
 {
@@ -36,10 +37,10 @@ class OpenSSLCryptProvider implements CryptProviderInterface
      * @throws \Ssess\Exception\UnknownHashAlgorithmException
      * @throws \Ssess\Exception\UnableToHashException
      * @param string $app_key Defines the App Key.
-     * @param string|null $hash_algorithm Defines the algorithm used to create hashes.
-     * @param string|null $encryption_algorithm Defines the algorithm to encrypt/decrypt data.
+     * @param string $hash_algorithm Defines the algorithm used to create hashes.
+     * @param string $encryption_algorithm Defines the algorithm to encrypt/decrypt data.
      */
-    public function __construct(string $app_key, ?string $hash_algorithm = 'sha512', ?string $encryption_algorithm = 'aes128')
+    public function __construct(string $app_key, string $hash_algorithm = 'sha512', string $encryption_algorithm = 'aes128')
     {
         $this->hashAlgorithm = $hash_algorithm;
         $this->encryptionAlgorithm = $encryption_algorithm;
@@ -91,7 +92,15 @@ class OpenSSLCryptProvider implements CryptProviderInterface
     public function encryptSessionData(string $session_id, string $session_data): string
     {
         $iv_length = openssl_cipher_iv_length($this->encryptionAlgorithm);
+        if ($iv_length === false) {
+            throw new UnableToGenerateRandomnessException();
+        }
+
         $iv = openssl_random_pseudo_bytes($iv_length);
+        if ($iv === false) {
+            throw new UnableToGenerateRandomnessException();
+        }
+
         $encryption_key = $this->getEncryptionKey($session_id);
         $encrypted_data = openssl_encrypt($session_data, $this->encryptionAlgorithm, $encryption_key, 0, $iv);
 
@@ -118,6 +127,10 @@ class OpenSSLCryptProvider implements CryptProviderInterface
         }
 
         $iv = base64_decode($encrypted_data->iv);
+        if ($iv === false) {
+            throw new UnableToDecryptException();
+        }
+
         $encryption_key = $this->getEncryptionKey($session_id);
 
         $decrypted_data = openssl_decrypt($encrypted_data->data, $this->encryptionAlgorithm, $encryption_key, 0, $iv);

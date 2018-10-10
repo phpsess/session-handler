@@ -38,11 +38,19 @@ class FileStorage implements StorageInterface
      * @throws DirectoryNotWritableException
      * @throws UnableToCreateDirectoryException
      * @param string|null $file_path The absolute path to the session files directory. If not set, defaults to INI session.save_path.
-     * @param string|null $file_prefix The prefix used in the session file name.
+     * @param string $file_prefix The prefix used in the session file name.
      */
-    public function __construct(?string $file_path = NULL, ?string $file_prefix = 'ssess_')
+    public function __construct(?string $file_path = NULL, string $file_prefix = 'ssess_')
     {
-        $this->filePath = $file_path ? $file_path : ini_get('session.save_path');
+        if (!$file_path) {
+            $file_path = ini_get('session.save_path');
+        }
+
+        if ($file_path === false) {
+            throw new UnableToCreateDirectoryException();
+        }
+
+        $this->filePath = $file_path;
 
         if (!file_exists($this->filePath)) {
             if (!mkdir($this->filePath, 0777)) {
@@ -163,6 +171,10 @@ class FileStorage implements StorageInterface
     {
         $files = scandir($this->filePath);
 
+        if ($files === false) {
+            throw new UnableToDeleteException();
+        }
+
         $limit_time = microtime(true) - $max_life / 1000000;
 
         $has_error = false;
@@ -206,7 +218,12 @@ class FileStorage implements StorageInterface
             return false;
         }
 
-        $content = json_decode(file_get_contents($full_path));
+        $contents = @file_get_contents($full_path);
+        if ($contents === false) {
+            throw new UnableToDeleteException();
+        }
+
+        $content = json_decode($contents);
 
         if ($content->time > $limit_time) {
             return false;
