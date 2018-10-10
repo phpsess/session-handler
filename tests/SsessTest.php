@@ -61,6 +61,27 @@ final class SsessTest extends TestCase
         $this->assertNotEquals($current_session_id, $arbitrary_session_id);
     }
 
+    public function testSessionFixationWhenSidExists()
+    {
+        $this->setIniConfigs();
+
+        $this->initSecureSession();
+
+        $session_id = session_id();
+
+        $_SESSION['password'] = 'password';
+
+        session_write_close();
+
+        $this->setArbitrarySessionId($session_id);
+
+        $this->initSecureSession();
+
+        $current_session_id = session_id();
+
+        $this->assertEquals($session_id, $current_session_id);
+    }
+
     public function testWarnStrictModeDisabled()
     {
         $this->setIniConfigs();
@@ -183,6 +204,67 @@ final class SsessTest extends TestCase
         $this->assertArrayNotHasKey('password', $_SESSION);
     }
 
+    public function testDestroy()
+    {
+        $this->setIniConfigs();
+
+        $crypt_provider = $this->initSecureSession();
+
+        $session_id = session_id();
+
+        $_SESSION['password'] = 'test';
+
+        session_write_close();
+
+        $destroyed = $crypt_provider->destroy($session_id);
+
+        $this->assertTrue($destroyed);
+
+        $crypt_provider = $this->initSecureSession();
+
+        $data = $crypt_provider->read($session_id);
+
+        $this->assertEquals($data, '');
+    }
+
+    public function testDestroyInexistentSessionId()
+    {
+        $this->setIniConfigs();
+
+        $crypt_provider = $this->initSecureSession('aSessionId');
+
+        $_SESSION['password'] = 'test';
+
+        session_write_close();
+
+        $destroyed = $crypt_provider->destroy('anotherSessionId');
+
+        $this->assertFalse($destroyed);
+    }
+
+    public function testGarbageCollector()
+    {
+        $this->setIniConfigs();
+
+        $crypt_provider = $this->initSecureSession();
+
+        $session_id = session_id();
+
+        $_SESSION['password'] = 'test';
+
+        session_write_close();
+
+        sleep(2);
+
+        $crypt_provider->gc(1);
+
+        $new_crypt_provider = $this->initSecureSession();
+
+        $data = $new_crypt_provider->read($session_id);
+
+        $this->assertEquals('', $data);
+    }
+
     private function setIniConfigs()
     {
         ini_set('session.use_strict_mode', '1');
@@ -191,9 +273,11 @@ final class SsessTest extends TestCase
         ini_set('session.use_trans_sid', '0');
     }
 
-    private function setArbitrarySessionId()
+    private function setArbitrarySessionId($arbitrary_session_id = '')
     {
-        $arbitrary_session_id = session_create_id();
+        if (!$arbitrary_session_id) {
+            $arbitrary_session_id = session_create_id();
+        }
 
         $session_name = session_name();
         $_COOKIE[$session_name] = $arbitrary_session_id;
@@ -210,5 +294,7 @@ final class SsessTest extends TestCase
         session_set_save_handler($ssess);
 
         session_start();
+
+        return $ssess;
     }
 }

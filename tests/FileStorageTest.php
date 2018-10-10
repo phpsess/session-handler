@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Ssess\Storage\FileStorage;
+use Ssess\Exception\SessionNotFoundException;
 
 use PHPUnit\Framework\TestCase;
 
@@ -73,6 +74,17 @@ final class FileStorageTest extends TestCase
         $saved_data = $new_file_storage->get($identifier);
 
         $this->assertEquals($data, $saved_data);
+    }
+
+    public function testGetInexistent()
+    {
+        $file_storage = new FileStorage();
+
+        $identifier = $this->getName();
+
+        $this->expectException(SessionNotFoundException::class);
+
+        $file_storage->get($identifier);
     }
 
     public function testExists()
