@@ -81,13 +81,15 @@ class MockStorage implements StorageInterface
      * Removes the session older than the specified time from the storage.
      *
      * @throws \Ssess\Exception\UnableToDeleteException
-     * @param float $max_life The maximum time (in milliseconds) that a session file must be kept.
+     * @param int $max_life The maximum time (in microseconds) that a session file must be kept.
      * @return void
      */
-    public function clearOld(float $max_life): void
+    public function clearOld(int $max_life): void
     {
+        $limit = microtime(true) - $max_life / 1000000;
+
         foreach (self::$files as &$file) {
-            if ($file['time'] + $max_life < microtime(true)) {
+            if ($file['time'] <= $limit) {
                 $file = null;
             }
         }

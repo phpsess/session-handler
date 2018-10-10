@@ -156,23 +156,41 @@ class FileStorage implements StorageInterface
      * Removes the session older than the specified time from the storage.
      *
      * @throws \Ssess\Exception\UnableToDeleteException
-     * @param float $max_life The maximum time (in milliseconds) that a session file must be kept.
+     * @param int $max_life The maximum time (in microseconds) that a session file must be kept.
      * @return void
      */
-    public function clearOld(float $max_life): void
+    public function clearOld(int $max_life): void
     {
-        $files = glob("$this->filePath/$this->filePrefix*");
+
+        $files = scandir($this->filePath);
+
+        $limit_time = microtime(true) - $max_life / 1000000;
+
         $has_error = false;
         foreach ($files as $file) {
-            $content = json_decode(file_get_contents($file));
-
-            if ($content->time + $max_life > microtime(true)) {
+            if (strpos($file, $this->filePrefix) !== 0) {
                 continue;
             }
 
-            if (!unlink($file)) {
+            $full_path = "$this->filePath/$file";
+
+            clearstatcache(true, $full_path);
+
+            if (!is_file($full_path)) {
+                continue;
+            }
+
+            $content = json_decode(file_get_contents($full_path));
+
+            if ($content->time > $limit_time) {
+                continue;
+            }
+
+            if (!@unlink($full_path)) {
                 $has_error = true;
             }
+
+            clearstatcache(true, $full_path);
         }
 
         if ($has_error) {
