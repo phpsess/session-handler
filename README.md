@@ -2,7 +2,6 @@
 A security-first PHP session handler
 
 [![Build Status](https://travis-ci.com/ayrtonvwf/ssess.svg?branch=master)](https://travis-ci.com/ayrtonvwf/ssess)
-[![Libraries.io for GitHub](https://img.shields.io/librariesio/github/ayrtonvwf/ssess.svg)](https://libraries.io/github/ayrtonvwf/ssess)
 ![GitHub](https://img.shields.io/github/license/ayrtonvwf/ssess.svg)
 [![Maintainability](https://api.codeclimate.com/v1/badges/37e7f8ce667e4c900bed/maintainability)](https://codeclimate.com/github/ayrtonvwf/ssess/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/37e7f8ce667e4c900bed/test_coverage)](https://codeclimate.com/github/ayrtonvwf/ssess/test_coverage)
