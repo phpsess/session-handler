@@ -161,32 +161,19 @@ class FileStorage implements StorageInterface
      */
     public function clearOld(int $max_life): void
     {
-
         $files = scandir($this->filePath);
 
         $limit_time = microtime(true) - $max_life / 1000000;
 
         $has_error = false;
         foreach ($files as $file) {
-            if (strpos($file, $this->filePrefix) !== 0) {
-                continue;
-            }
-
             $full_path = "$this->filePath/$file";
 
-            clearstatcache(true, $full_path);
-
-            if (!is_file($full_path)) {
+            if (!$this->shouldBeCleared($full_path, $file, $this->filePrefix, $limit_time)) {
                 continue;
             }
 
-            $content = json_decode(file_get_contents($full_path));
-
-            if ($content->time > $limit_time) {
-                continue;
-            }
-
-            if (!@unlink($full_path)) {
+            if (!@unlink("$this->filePath/$file")) {
                 $has_error = true;
             }
 
@@ -196,6 +183,36 @@ class FileStorage implements StorageInterface
         if ($has_error) {
             throw new UnableToDeleteException();
         }
+    }
+
+    /**
+     * Checks whether a file should be removed by clearOld or not
+     *
+     * @param string $full_path The absolute path to the file
+     * @param string $file_name Only the name of the file
+     * @param string $prefix The prefix of the session files
+     * @param float $limit_time The maximum timestamp (in microseconds) a file can be kept
+     * @return bool If the file should be cleared or not
+     */
+    private function shouldBeCleared(string $full_path, string $file_name, string $prefix, float $limit_time): bool
+    {
+        if (strpos($file_name, $prefix) !== 0) {
+            return false;
+        }
+
+        clearstatcache(true, $full_path);
+
+        if (!is_file($full_path)) {
+            return false;
+        }
+
+        $content = json_decode(file_get_contents($full_path));
+
+        if ($content->time > $limit_time) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
