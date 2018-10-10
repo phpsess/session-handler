@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Ssess\Storage\MockStorage;
 
 use PHPUnit\Framework\TestCase;
+use Ssess\Exception\SessionNotFoundException;
 
 final class MockStorageTest extends TestCase
 {
@@ -22,8 +23,6 @@ final class MockStorageTest extends TestCase
         $saved_data = $file_storage->get($identifier);
 
         $this->assertEquals($data, $saved_data);
-
-        $file_storage->destroy($identifier);
     }
 
     public function testGetWithDifferentInstance()
@@ -41,8 +40,17 @@ final class MockStorageTest extends TestCase
         $saved_data = $new_file_storage->get($identifier);
 
         $this->assertEquals($data, $saved_data);
+    }
 
-        $file_storage->destroy($identifier);
+    public function testGetInexistent()
+    {
+        $file_storage = new MockStorage();
+
+        $identifier = $this->getName();
+
+        $this->expectException(SessionNotFoundException::class);
+
+        $file_storage->get($identifier);
     }
 
     public function testExists()
@@ -51,18 +59,15 @@ final class MockStorageTest extends TestCase
 
         $identifier = $this->getName();
 
-        $file_storage->destroy($identifier);
-        if ($file_storage->sessionExists($identifier)) {
-            $this->fail('Cant assure session does not exist');
-        }
+        $exists = $file_storage->sessionExists($identifier);
+
+        $this->assertFalse($exists);
 
         $file_storage->save($identifier, 'test');
 
         $exists = $file_storage->sessionExists($identifier);
 
         $this->assertTrue($exists);
-
-        $file_storage->destroy($identifier);
     }
 
     public function testDestroy()
@@ -72,9 +77,10 @@ final class MockStorageTest extends TestCase
         $identifier = $this->getName();
 
         $file_storage->save($identifier, 'test');
-        if (!$file_storage->sessionExists($identifier)) {
-            $this->fail('Cant create session to destroy');
-        }
+
+        $exists = $file_storage->sessionExists($identifier);
+
+        $this->assertTrue($exists);
 
         $file_storage->destroy($identifier);
 
@@ -91,9 +97,13 @@ final class MockStorageTest extends TestCase
 
         $file_storage->save($identifier, 'test');
 
-        sleep(2);
+        usleep(1000); // 1 milisecond
 
-        $file_storage->clearOld(1);
+        $exists = $file_storage->sessionExists($identifier);
+
+        $this->assertTrue($exists);
+
+        $file_storage->clearOld(10);
 
         $exists = $file_storage->sessionExists($identifier);
 
@@ -108,15 +118,15 @@ final class MockStorageTest extends TestCase
 
         $file_storage->save($identifier, 'test');
 
-        sleep(1);
-
-        $file_storage->clearOld(2);
-
         $exists = $file_storage->sessionExists($identifier);
 
         $this->assertTrue($exists);
 
-        $file_storage->destroy($identifier);
+        $file_storage->clearOld(1000000); // one second
+
+        $exists = $file_storage->sessionExists($identifier);
+
+        $this->assertTrue($exists);
     }
 
 }

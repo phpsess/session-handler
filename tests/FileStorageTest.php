@@ -10,6 +10,7 @@ use Ssess\Exception\UnableToSaveException;
 use Ssess\Exception\UnableToDeleteException;
 
 use PHPUnit\Framework\TestCase;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * @runTestsInSeparateProcesses
@@ -19,63 +20,39 @@ final class FileStorageTest extends TestCase
 
     public function setUp()
     {
-        $current_path = getcwd();
-        $folder = 'temp_session_' . self::class . '_' . $this->getName();
+        $path = vfsStream::setup('root', 0777, ['session' => []])->url();
 
-        ini_set('session.save_path', "$current_path/$folder");
+        $class_name = self::class;
+
+        $test_name = $this->getName();
+
+        $session_path = "$path/session/$class_name-$test_name";
+
+        ini_set('session.save_path', $session_path);
 
         parent::setUp();
-    }
-
-    public function tearDown()
-    {
-        $session_path = session_save_path();
-
-        if (!file_exists($session_path)) {
-            return;
-        }
-
-        session_write_close();
-
-        $session_files = glob("$session_path/*");
-
-        foreach ($session_files as $session_file) {
-            @unlink($session_file);
-        }
-
-        @rmdir($session_path);
-
-        parent::tearDown();
     }
 
     public function testUnwritableDirectory()
     {
         $session_path = session_save_path();
 
-        mkdir($session_path);
-
-        chmod($session_path, 0444);
+        mkdir($session_path, 0444);
 
         $this->expectException(DirectoryNotWritableException::class);
 
         new FileStorage();
-
-        chmod($session_path, 0777);
     }
 
     public function testUnreadableDirectory()
     {
         $session_path = session_save_path();
 
-        mkdir($session_path);
-
-        chmod($session_path, 0222);
+        mkdir($session_path, 0222);
 
         $this->expectException(DirectoryNotReadableException::class);
 
         new FileStorage();
-
-        chmod($session_path, 0777);
     }
 
     public function testUnableToSave()
@@ -89,8 +66,6 @@ final class FileStorageTest extends TestCase
         $this->expectException(UnableToSaveException::class);
 
         $file_storage->save('aSessionIdentifier', 'someData');
-
-        chmod($session_path, 0777);
     }
 
     public function testUnableToDestroy()
@@ -108,8 +83,6 @@ final class FileStorageTest extends TestCase
         $this->expectException(UnableToDeleteException::class);
 
         $file_storage->destroy($identifier);
-
-        chmod($session_path, 0777);
 
     }
 
@@ -162,10 +135,6 @@ final class FileStorageTest extends TestCase
 
         $identifier = $this->getName();
 
-        if ($file_storage->sessionExists($identifier)) {
-            $file_storage->destroy($identifier);
-        }
-
         $exists = $file_storage->sessionExists($identifier);
 
         $this->assertFalse($exists);
@@ -204,13 +173,13 @@ final class FileStorageTest extends TestCase
 
         $file_storage->save($identifier, 'test');
 
-        sleep(1);
+        usleep(1000); // 1 millisecond
 
         $exists = $file_storage->sessionExists($identifier);
 
         $this->assertTrue($exists);
 
-        $file_storage->clearOld(1);
+        $file_storage->clearOld(10);
 
         $exists = $file_storage->sessionExists($identifier);
 
@@ -229,7 +198,7 @@ final class FileStorageTest extends TestCase
 
         $this->assertTrue($exists);
 
-        $file_storage->clearOld(1);
+        $file_storage->clearOld(1000000); // one second
 
         $exists = $file_storage->sessionExists($identifier);
 

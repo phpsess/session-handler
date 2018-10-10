@@ -10,6 +10,7 @@ use Ssess\Exception\UseOnlyCookiesDisabledException;
 use Ssess\Exception\UseTransSidEnabledException;
 
 use PHPUnit\Framework\TestCase;
+use org\bovigo\vfs\vfsStream;
 
 /**
  * @runTestsInSeparateProcesses
@@ -19,39 +20,25 @@ final class SsessTest extends TestCase
 
     public function setUp()
     {
-        $current_path = getcwd();
+        $path = vfsStream::setup()->url();
+
+        $class_name = self::class;
+
         $test_name = $this->getName();
 
-        ini_set('session.save_path', "$current_path/temp_session_$test_name");
+        $session_path = "$path/$class_name-$test_name";
+
+        ini_set('session.save_path', $session_path);
+        ini_set('session.use_strict_mode', '1');
+        ini_set('session.use_cookies', '1');
+        ini_set('session.use_only_cookies', '1');
+        ini_set('session.use_trans_sid', '0');
 
         parent::setUp();
     }
 
-    public function tearDown()
-    {
-        $session_path = session_save_path();
-
-        if (!file_exists($session_path)) {
-            return;
-        }
-
-        session_write_close();
-
-        $session_files = glob("$session_path/*");
-
-        foreach ($session_files as $session_file) {
-            unlink($session_file);
-        }
-
-        rmdir($session_path);
-
-        parent::tearDown();
-    }
-
     public function testSessionFixation()
     {
-        $this->setIniConfigs();
-
         $arbitrary_session_id = $this->setArbitrarySessionId();
 
         $this->initSecureSession();
@@ -63,8 +50,6 @@ final class SsessTest extends TestCase
 
     public function testSessionFixationWhenSidExists()
     {
-        $this->setIniConfigs();
-
         $this->initSecureSession();
 
         $session_id = session_id();
@@ -84,8 +69,6 @@ final class SsessTest extends TestCase
 
     public function testWarnStrictModeDisabled()
     {
-        $this->setIniConfigs();
-
         ini_set('session.use_strict_mode', '0');
 
         $this->expectException(UseStrictModeDisabledException::class);
@@ -97,8 +80,6 @@ final class SsessTest extends TestCase
 
     public function testWarnUseCookiesDisabled()
     {
-        $this->setIniConfigs();
-
         ini_set('session.use_cookies', '0');
 
         $this->expectException(UseCookiesDisabledException::class);
@@ -110,8 +91,6 @@ final class SsessTest extends TestCase
 
     public function testWarnUseOnlyCookiesDisabled()
     {
-        $this->setIniConfigs();
-
         ini_set('session.use_only_cookies', '0');
 
         $this->expectException(UseOnlyCookiesDisabledException::class);
@@ -123,8 +102,6 @@ final class SsessTest extends TestCase
 
     public function testWarnUseTransSidEnabled()
     {
-        $this->setIniConfigs();
-
         ini_set('session.use_trans_sid', '1');
 
         $this->expectException(UseTransSidEnabledException::class);
@@ -136,8 +113,6 @@ final class SsessTest extends TestCase
 
     public function testDisabledWarnInsecureSettings()
     {
-        $this->setIniConfigs();
-
         ini_set('session.use_strict_mode', '0');
         ini_set('session.use_cookies', '0');
         ini_set('session.use_only_cookies', '0');
@@ -159,8 +134,6 @@ final class SsessTest extends TestCase
 
     public function testIgnoreSessionFixation()
     {
-        $this->setIniConfigs();
-
         Ssess::$warnInsecureSettings = false;
 
         ini_set('session.use_strict_mode', '0');
@@ -176,8 +149,6 @@ final class SsessTest extends TestCase
 
     public function testCanWriteReopenAndRead()
     {
-        $this->setIniConfigs();
-
         $this->initSecureSession();
 
         $_SESSION['password'] = 'password';
@@ -191,8 +162,6 @@ final class SsessTest extends TestCase
 
     public function testCantReadWithWrongAppKey()
     {
-        $this->setIniConfigs();
-
         $this->initSecureSession('original-key');
 
         $_SESSION['password'] = 'password';
@@ -206,8 +175,6 @@ final class SsessTest extends TestCase
 
     public function testDestroy()
     {
-        $this->setIniConfigs();
-
         $crypt_provider = $this->initSecureSession();
 
         $session_id = session_id();
@@ -229,8 +196,6 @@ final class SsessTest extends TestCase
 
     public function testDestroyInexistentSessionId()
     {
-        $this->setIniConfigs();
-
         $crypt_provider = $this->initSecureSession('aSessionId');
 
         $_SESSION['password'] = 'test';
@@ -244,8 +209,6 @@ final class SsessTest extends TestCase
 
     public function testGarbageCollector()
     {
-        $this->setIniConfigs();
-
         $crypt_provider = $this->initSecureSession();
 
         $session_id = session_id();
@@ -263,14 +226,6 @@ final class SsessTest extends TestCase
         $data = $new_crypt_provider->read($session_id);
 
         $this->assertEquals('', $data);
-    }
-
-    private function setIniConfigs()
-    {
-        ini_set('session.use_strict_mode', '1');
-        ini_set('session.use_cookies', '1');
-        ini_set('session.use_only_cookies', '1');
-        ini_set('session.use_trans_sid', '0');
     }
 
     private function setArbitrarySessionId($arbitrary_session_id = '')
