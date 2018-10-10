@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 use Ssess\Storage\FileStorage;
 use Ssess\Exception\SessionNotFoundException;
+use Ssess\Exception\DirectoryNotWritableException;
+use Ssess\Exception\DirectoryNotReadableException;
+use Ssess\Exception\UnableToSaveException;
+use Ssess\Exception\UnableToDeleteException;
 
 use PHPUnit\Framework\TestCase;
 
@@ -36,12 +40,77 @@ final class FileStorageTest extends TestCase
         $session_files = glob("$session_path/*");
 
         foreach ($session_files as $session_file) {
-            unlink($session_file);
+            @unlink($session_file);
         }
 
-        rmdir($session_path);
+        @rmdir($session_path);
 
         parent::tearDown();
+    }
+
+    public function testUnwritableDirectory()
+    {
+        $session_path = session_save_path();
+
+        mkdir($session_path);
+
+        chmod($session_path, 0444);
+
+        $this->expectException(DirectoryNotWritableException::class);
+
+        new FileStorage();
+
+        chmod($session_path, 0777);
+    }
+
+    public function testUnreadableDirectory()
+    {
+        $session_path = session_save_path();
+
+        mkdir($session_path);
+
+        chmod($session_path, 0222);
+
+        $this->expectException(DirectoryNotReadableException::class);
+
+        new FileStorage();
+
+        chmod($session_path, 0777);
+    }
+
+    public function testUnableToSave()
+    {
+        $session_path = session_save_path();
+
+        $file_storage = new FileStorage();
+
+        chmod($session_path, 0444);
+
+        $this->expectException(UnableToSaveException::class);
+
+        $file_storage->save('aSessionIdentifier', 'someData');
+
+        chmod($session_path, 0777);
+    }
+
+    public function testUnableToDestroy()
+    {
+        $session_path = session_save_path();
+
+        $identifier = 'aSessionIdentifier';
+
+        $file_storage = new FileStorage();
+
+        $file_storage->save($identifier, 'someData');
+
+        chmod($session_path, 0555);
+
+        $this->expectException(UnableToDeleteException::class);
+
+        $file_storage->destroy($identifier);
+
+        chmod($session_path, 0777);
+
     }
 
     public function testSaveThenGet()

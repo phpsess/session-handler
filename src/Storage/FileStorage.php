@@ -78,7 +78,7 @@ class FileStorage implements StorageInterface
             'time' => microtime(true)
         ));
 
-        if (file_put_contents($file_name, $contents) === false) {
+        if (@file_put_contents($file_name, $contents) === false) {
             throw new UnableToSaveException();
         }
     }
@@ -145,7 +145,7 @@ class FileStorage implements StorageInterface
 
         $file_name = $this->getFileName($session_identifier);
 
-        if (!unlink($file_name)) {
+        if (!@unlink($file_name)) {
             throw new UnableToDeleteException();
         }
 
