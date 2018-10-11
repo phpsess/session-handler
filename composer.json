@@ -23,7 +23,8 @@
     "require-dev": {
         "phpunit/phpunit": "^7",
         "mikey179/vfsStream": "^1.6",
-        "phpstan/phpstan": "^0.10.3"
+        "phpstan/phpstan": "^0.10.3",
+        "phpmd/phpmd": "^2.6"
     },
     "scripts": {
         "build": "composer test && composer phpstan && composer phpmd",
