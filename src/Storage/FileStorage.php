@@ -50,20 +50,19 @@ class FileStorage implements StorageInterface
             throw new UnableToCreateDirectoryException();
         }
 
-        $this->filePath = $filePath;
-
-        if (!file_exists($this->filePath) && !@mkdir($this->filePath, 0777)) {
+        if (!file_exists($filePath) && !@mkdir($filePath, 0777)) {
             throw new UnableToCreateDirectoryException();
         }
 
-        if (!is_readable($this->filePath)) {
+        if (!is_readable($filePath)) {
             throw new DirectoryNotReadableException();
         }
 
-        if (!is_writable($this->filePath)) {
+        if (!is_writable($filePath)) {
             throw new DirectoryNotWritableException();
         }
 
+        $this->filePath = $filePath;
         $this->filePrefix = $filePrefix;
     }
 
