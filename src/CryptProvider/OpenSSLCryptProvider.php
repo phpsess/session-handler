@@ -8,7 +8,6 @@ use Ssess\Exception\OpenSSLNotLoadedException;
 use Ssess\Exception\UnableToDecryptException;
 use Ssess\Exception\UnknownEncryptionAlgorithmException;
 use Ssess\Exception\UnknownHashAlgorithmException;
-use Ssess\Exception\UnableToGenerateRandomnessException;
 
 class OpenSSLCryptProvider implements CryptProviderInterface
 {
@@ -80,15 +79,8 @@ class OpenSSLCryptProvider implements CryptProviderInterface
      */
     public function encryptSessionData(string $sessionId, string $sessionData): string
     {
-        $ivLength = openssl_cipher_iv_length($this->encryptionAlgorithm);
-        if ($ivLength === false) {
-            throw new UnableToGenerateRandomnessException();
-        }
-
-        $initVector = openssl_random_pseudo_bytes($ivLength);
-        if ($initVector === false) {
-            throw new UnableToGenerateRandomnessException();
-        }
+        $ivLength = (int) openssl_cipher_iv_length($this->encryptionAlgorithm);
+        $initVector = (string) openssl_random_pseudo_bytes($ivLength);
 
         $encryptionKey = $this->getEncryptionKey($sessionId);
         $encryptedData = openssl_encrypt($sessionData, $this->encryptionAlgorithm, $encryptionKey, 0, $initVector);
