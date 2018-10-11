@@ -13,10 +13,10 @@
 
     <filter>
         <whitelist>
-            <directory>./src/</directory>
+            <directory suffix=".php">src</directory>
             <exclude>
-                <directory>./src/Exception</directory>
-                <file>./src/*/*Interface.php</file>
+                <directory suffix="Exception.php">src</directory>
+                <directory suffix="Interface.php">src</directory>
             </exclude>
         </whitelist>
     </filter>
