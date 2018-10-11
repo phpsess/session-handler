@@ -122,20 +122,24 @@ class OpenSSLCryptProvider implements CryptProviderInterface
      */
     public function decryptSessionData(string $sessionId, string $sessionData): string
     {
-        $encryptedData = json_decode($sessionData);
-
-        if (!$encryptedData) {
+        if (!$sessionData) {
             return '';
         }
 
-        $initVector = base64_decode($encryptedData->initVector);
+        $encryptedData = json_decode($sessionData);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new UnableToDecryptException();
+        }
+
+        $initVector = base64_decode($encryptedData->initVector, true);
         if ($initVector === false) {
             throw new UnableToDecryptException();
         }
 
         $encryptionKey = $this->getEncryptionKey($sessionId);
 
-        $decryptedData = openssl_decrypt($encryptedData->data, $this->encryptionAlgorithm, $encryptionKey, 0, $initVector);
+        $decryptedData = @openssl_decrypt($encryptedData->data, $this->encryptionAlgorithm, $encryptionKey, 0, $initVector);
         if ($decryptedData === false) {
             throw new UnableToDecryptException();
         }

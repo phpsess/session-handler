@@ -113,4 +113,33 @@ final class OpenSSLCryptProviderTest extends TestCase
 
         $new_crypt_provider->decryptSessionData($session_id, $encrypted_data);
     }
+
+    public function testThrowExceptionWithUnparsableJson()
+    {
+        $crypt_provider = new OpenSSLCryptProvider('appKey');
+
+        $this->expectException(UnableToDecryptException::class);
+
+        $crypt_provider->decryptSessionData('aSessionId', '{some: unparsable: json}');
+    }
+
+    public function testDecryptEmptyData()
+    {
+        $crypt_provider = new OpenSSLCryptProvider('appKey');
+
+        $data = $crypt_provider->decryptSessionData('aSessionId', '');
+
+        $this->assertEquals('', $data);
+    }
+
+    public function testWrongInitVector()
+    {
+        $data = json_encode(['data' => 'test', 'initVector' => 'wrong Init-Vector']);
+
+        $crypt_provider = new OpenSSLCryptProvider('appKey');
+
+        $this->expectException(UnableToDecryptException::class);
+
+        $crypt_provider->decryptSessionData('aSessionId', $data);
+    }
 }
