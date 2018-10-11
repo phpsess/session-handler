@@ -16,4 +16,4 @@ before_script:
 script:
   - composer install
   - composer build
-  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter format-coverage build/coverage/clover.xml --input-type clover && ./cc-test-reporter upload-coverage -r $CC_TEST_REPORTER_ID --exit-code $TRAVIS_TEST_RESULT; fi
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter format-coverage build/coverage/clover.xml --input-type clover && ./cc-test-reporter upload-coverage -r $CC_TEST_REPORTER_ID; fi
