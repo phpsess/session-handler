@@ -8,7 +8,6 @@ use Ssess\Exception\OpenSSLNotLoadedException;
 use Ssess\Exception\UnableToDecryptException;
 use Ssess\Exception\UnknownEncryptionAlgorithmException;
 use Ssess\Exception\UnknownHashAlgorithmException;
-use Ssess\Exception\UnableToHashException;
 use Ssess\Exception\UnableToGenerateRandomnessException;
 
 class OpenSSLCryptProvider implements CryptProviderInterface
@@ -35,7 +34,6 @@ class OpenSSLCryptProvider implements CryptProviderInterface
      * @throws \Ssess\Exception\OpenSSLNotLoadedException
      * @throws \Ssess\Exception\UnknownEncryptionAlgorithmException
      * @throws \Ssess\Exception\UnknownHashAlgorithmException
-     * @throws \Ssess\Exception\UnableToHashException
      * @param  string $appKey              Defines the App Key.
      * @param  string $hashAlgorithm       Defines the algorithm used to create hashes.
      * @param  string $encryptionAlgorithm Defines the algorithm to encrypt/decrypt data.
@@ -59,12 +57,7 @@ class OpenSSLCryptProvider implements CryptProviderInterface
             throw new UnknownEncryptionAlgorithmException();
         }
 
-        $digest = openssl_digest($appKey, $this->hashAlgorithm);
-        if ($digest === false) {
-            throw new UnableToHashException();
-        }
-
-        $this->appKey = $digest;
+        $this->appKey = (string) openssl_digest($appKey, $this->hashAlgorithm);
     }
 
     /**
@@ -75,11 +68,7 @@ class OpenSSLCryptProvider implements CryptProviderInterface
      */
     public function makeSessionIdentifier(string $sessionId): string
     {
-        $digest = openssl_digest($sessionId . $this->appKey, $this->hashAlgorithm);
-        if ($digest === false) {
-            throw new UnableToHashException();
-        }
-        return $digest;
+        return (string) openssl_digest($sessionId . $this->appKey, $this->hashAlgorithm);
     }
 
     /**
@@ -155,10 +144,6 @@ class OpenSSLCryptProvider implements CryptProviderInterface
      */
     private function getEncryptionKey(string $sessionId): string
     {
-        $digest = openssl_digest($this->appKey . $sessionId, $this->hashAlgorithm);
-        if ($digest === false) {
-            throw new UnableToHashException();
-        }
-        return $digest;
+        return (string) openssl_digest($this->appKey . $sessionId, $this->hashAlgorithm);
     }
 }
