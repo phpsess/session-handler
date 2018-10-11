@@ -11,10 +11,9 @@ env:
 before_script:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
-  - ./cc-test-reporter format-coverage build/coverage/clover.xml --input-type clover
   - ./cc-test-reporter before-build
 
 script:
   - composer install
   - composer build
-  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi
+  - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter format-coverage build/coverage/clover.xml --input-type clover && ./cc-test-reporter upload-coverage -r $CC_TEST_REPORTER_ID --exit-code $TRAVIS_TEST_RESULT; fi
