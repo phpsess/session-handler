@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 use Ssess\Ssess;
 use Ssess\CryptProvider\OpenSSLCryptProvider;
+use Ssess\Storage\MockStorage;
+
 use Ssess\Exception\UseStrictModeDisabledException;
 use Ssess\Exception\UseCookiesDisabledException;
 use Ssess\Exception\UseOnlyCookiesDisabledException;
 use Ssess\Exception\UseTransSidEnabledException;
 
 use PHPUnit\Framework\TestCase;
-use org\bovigo\vfs\vfsStream;
 
 /**
  * @runTestsInSeparateProcesses
@@ -20,15 +21,6 @@ final class SsessTest extends TestCase
 
     public function setUp()
     {
-        $path = vfsStream::setup()->url();
-
-        $class_name = self::class;
-
-        $test_name = $this->getName();
-
-        $session_path = "$path/$class_name-$test_name";
-
-        ini_set('session.save_path', $session_path);
         ini_set('session.use_strict_mode', '1');
         ini_set('session.use_cookies', '1');
         ini_set('session.use_only_cookies', '1');
@@ -73,9 +65,7 @@ final class SsessTest extends TestCase
 
         $this->expectException(UseStrictModeDisabledException::class);
 
-        $crypt_provider = new OpenSSLCryptProvider('testKey');
-
-        new Ssess($crypt_provider);
+        $this->initSecureSession();
     }
 
     public function testWarnUseCookiesDisabled()
@@ -84,9 +74,7 @@ final class SsessTest extends TestCase
 
         $this->expectException(UseCookiesDisabledException::class);
 
-        $crypt_provider = new OpenSSLCryptProvider('testKey');
-
-        new Ssess($crypt_provider);
+        $this->initSecureSession();
     }
 
     public function testWarnUseOnlyCookiesDisabled()
@@ -95,9 +83,7 @@ final class SsessTest extends TestCase
 
         $this->expectException(UseOnlyCookiesDisabledException::class);
 
-        $crypt_provider = new OpenSSLCryptProvider('testKey');
-
-        new Ssess($crypt_provider);
+        $this->initSecureSession();
     }
 
     public function testWarnUseTransSidEnabled()
@@ -106,9 +92,7 @@ final class SsessTest extends TestCase
 
         $this->expectException(UseTransSidEnabledException::class);
 
-        $crypt_provider = new OpenSSLCryptProvider('testKey');
-
-        new Ssess($crypt_provider);
+        $this->initSecureSession();
     }
 
     public function testDisabledWarnInsecureSettings()
@@ -120,16 +104,12 @@ final class SsessTest extends TestCase
 
         Ssess::$warnInsecureSettings = false;
 
-        $crypt_provider = new OpenSSLCryptProvider('testKey');
-
+        $exception = null;
         try {
-            new Ssess($crypt_provider);
-            $did_not_throw_errors = true;
-        } catch(Exception $e) {
-            $did_not_throw_errors = false;
-        }
+            $this->initSecureSession();
+        } catch(\Exception $exception) {}
 
-        $this->assertTrue($did_not_throw_errors);
+        $this->assertNull($exception);
     }
 
     public function testIgnoreSessionFixation()
@@ -243,8 +223,9 @@ final class SsessTest extends TestCase
     private function initSecureSession($key = 'testKey')
     {
         $crypt_provider = new OpenSSLCryptProvider($key);
+        $storage = new MockStorage();
 
-        $ssess = new Ssess($crypt_provider);
+        $ssess = new Ssess($crypt_provider, $storage);
 
         session_set_save_handler($ssess);
 
