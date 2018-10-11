@@ -30,10 +30,10 @@ class MockStorage implements StorageInterface
      */
     public function save(string $sessionIdentifier, string $sessionData): void
     {
-        self::$files[$sessionIdentifier] = array(
+        self::$files[$sessionIdentifier] = [
             'data' => $sessionData,
             'time' => microtime(true)
-        );
+        ];
     }
 
     /**

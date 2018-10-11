@@ -78,12 +78,10 @@ class FileStorage implements StorageInterface
     {
         $fileName = $this->getFileName($sessionIdentifier);
 
-        $contents = json_encode(
-            array(
+        $contents = json_encode([
             'data' => $sessionData,
             'time' => microtime(true)
-            )
-        );
+        ]);
 
         if (@file_put_contents($fileName, $contents) === false) {
             throw new UnableToSaveException();
