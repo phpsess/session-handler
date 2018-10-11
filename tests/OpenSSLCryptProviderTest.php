@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Ssess\Tests;
+
 use Ssess\CryptProvider\OpenSSLCryptProvider;
 use Ssess\Exception\UnknownHashAlgorithmException;
 use Ssess\Exception\UnknownEncryptionAlgorithmException;

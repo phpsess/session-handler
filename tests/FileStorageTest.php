@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Ssess\Tests;
+
 use Ssess\Storage\FileStorage;
 use Ssess\Exception\SessionNotFoundException;
 use Ssess\Exception\DirectoryNotWritableException;
@@ -23,7 +25,14 @@ final class FileStorageTest extends TestCase
     {
         $path = vfsStream::setup('root', 0777, ['session' => []])->url();
 
-        $class_name = self::class;
+        try {
+            $reflection = new \ReflectionClass(self::class);
+        } catch (\Exception $exception) {
+            $this->fail('Not able to determine the test class name');
+            return;
+        }
+
+        $class_name = $reflection->getShortName();
 
         $test_name = $this->getName();
 
@@ -84,7 +93,6 @@ final class FileStorageTest extends TestCase
         $this->expectException(UnableToDeleteException::class);
 
         $file_storage->destroy($identifier);
-
     }
 
     public function testSaveThenGet()
@@ -242,5 +250,4 @@ final class FileStorageTest extends TestCase
 
         $fileStorage->clearOld(0);
     }
-
 }

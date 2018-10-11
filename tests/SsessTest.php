@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Ssess\Tests;
+
 use Ssess\Ssess;
 use Ssess\CryptProvider\OpenSSLCryptProvider;
 use Ssess\Storage\MockStorage;
@@ -107,7 +109,8 @@ final class SsessTest extends TestCase
         $exception = null;
         try {
             $this->initSecureSession();
-        } catch(\Exception $exception) {}
+        } catch (\Exception $exception) {
+        }
 
         $this->assertNull($exception);
     }

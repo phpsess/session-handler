@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+namespace Ssess\Tests;
+
 use Ssess\Storage\MockStorage;
 
 use PHPUnit\Framework\TestCase;
@@ -128,5 +130,4 @@ final class MockStorageTest extends TestCase
 
         $this->assertTrue($exists);
     }
-
 }
