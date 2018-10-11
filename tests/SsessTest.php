@@ -158,7 +158,7 @@ final class SsessTest extends TestCase
 
     public function testDestroy()
     {
-        $crypt_provider = $this->initSecureSession();
+        $ssess = $this->initSecureSession();
 
         $session_id = session_id();
 
@@ -166,33 +166,33 @@ final class SsessTest extends TestCase
 
         session_write_close();
 
-        $destroyed = $crypt_provider->destroy($session_id);
+        $destroyed = $ssess->destroy($session_id);
 
         $this->assertTrue($destroyed);
 
-        $crypt_provider = $this->initSecureSession();
+        $ssess = $this->initSecureSession();
 
-        $data = $crypt_provider->read($session_id);
+        $data = $ssess->read($session_id);
 
         $this->assertEquals($data, '');
     }
 
     public function testDestroyInexistentSessionId()
     {
-        $crypt_provider = $this->initSecureSession('aSessionId');
+        $ssess = $this->initSecureSession('aSessionId');
 
         $_SESSION['password'] = 'test';
 
         session_write_close();
 
-        $destroyed = $crypt_provider->destroy('anotherSessionId');
+        $destroyed = $ssess->destroy('anotherSessionId');
 
         $this->assertFalse($destroyed);
     }
 
     public function testGarbageCollector()
     {
-        $crypt_provider = $this->initSecureSession();
+        $ssess = $this->initSecureSession();
 
         $session_id = session_id();
 
@@ -202,7 +202,7 @@ final class SsessTest extends TestCase
 
         sleep(2);
 
-        $crypt_provider->gc(1);
+        $ssess->gc(1);
 
         $new_crypt_provider = $this->initSecureSession();
 
