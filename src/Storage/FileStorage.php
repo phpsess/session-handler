@@ -52,10 +52,8 @@ class FileStorage implements StorageInterface
 
         $this->filePath = $filePath;
 
-        if (!file_exists($this->filePath)) {
-            if (!@mkdir($this->filePath, 0777)) {
-                throw new UnableToCreateDirectoryException();
-            }
+        if (!file_exists($this->filePath) && !@mkdir($this->filePath, 0777)) {
+            throw new UnableToCreateDirectoryException();
         }
 
         if (!is_readable($this->filePath)) {
