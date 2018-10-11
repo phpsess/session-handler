@@ -15,5 +15,5 @@ before_script:
 
 script:
   - composer install
-  - phpunit --coverage-text --coverage-clover build/logs/clover.xml
+  - composer build
   - if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT; fi

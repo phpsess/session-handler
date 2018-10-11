@@ -26,8 +26,9 @@
         "phpstan/phpstan": "^0.10.3"
     },
     "scripts": {
-        "test": "./vendor/bin/phpunit",
-        "phpstan": "./vendor/bin/phpstan analyse",
-        "phpmd": "./vendor/bin/phpmd src text cleancode,codesize,controversial,design,naming,unusedcode"
+        "build": "composer test && composer phpstan && composer phpmd",
+        "test": "phpunit",
+        "phpstan": "phpstan analyse",
+        "phpmd": "phpmd src text cleancode,codesize,controversial,design,naming,unusedcode"
     }
 }
