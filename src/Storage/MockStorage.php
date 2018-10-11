@@ -68,12 +68,15 @@ class MockStorage implements StorageInterface
      * Remove this session from the storage.
      *
      * @throws \Ssess\Exception\SessionNotFoundException
-     * @throws \Ssess\Exception\UnableToDeleteException
      * @param  string $sessionIdentifier The session identifier.
      * @return void
      */
     public function destroy(string $sessionIdentifier): void
     {
+        if (!isset(self::$files[$sessionIdentifier])) {
+            throw new SessionNotFoundException();
+        }
+
         unset(self::$files[$sessionIdentifier]);
     }
 
