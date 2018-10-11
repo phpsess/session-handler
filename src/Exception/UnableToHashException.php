@@ -8,5 +8,4 @@ class UnableToHashException extends \RuntimeException
 {
 
     protected $message = 'The encryption driver was unable to hash the data.';
-
 }

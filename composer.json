@@ -24,12 +24,17 @@
         "phpunit/phpunit": "^7",
         "mikey179/vfsStream": "^1.6",
         "phpstan/phpstan": "^0.10.3",
-        "phpmd/phpmd": "^2.6"
+        "phpmd/phpmd": "^2.6",
+        "squizlabs/php_codesniffer": "^3.3"
     },
     "scripts": {
-        "build": "composer test && composer phpstan && composer phpmd",
+        "fix": "phpcbf src",
+
+        "build": "composer test && composer phpstan && composer phpmd && composer phpcs",
+
         "test": "phpunit",
         "phpstan": "phpstan analyse",
-        "phpmd": "phpmd src text cleancode,codesize,controversial,design,naming,unusedcode"
+        "phpmd": "phpmd src text cleancode,codesize,controversial,design,naming,unusedcode",
+        "phpcs": "phpcs"
     }
 }

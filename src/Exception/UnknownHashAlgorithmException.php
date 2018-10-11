@@ -8,5 +8,4 @@ class UnknownHashAlgorithmException extends \RuntimeException
 {
 
     protected $message = 'The requested hashing algorithm is unknown';
-
 }

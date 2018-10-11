@@ -36,9 +36,9 @@ class OpenSSLCryptProvider implements CryptProviderInterface
      * @throws \Ssess\Exception\UnknownEncryptionAlgorithmException
      * @throws \Ssess\Exception\UnknownHashAlgorithmException
      * @throws \Ssess\Exception\UnableToHashException
-     * @param string $appKey Defines the App Key.
-     * @param string $hashAlgorithm Defines the algorithm used to create hashes.
-     * @param string $encryptionAlgorithm Defines the algorithm to encrypt/decrypt data.
+     * @param  string $appKey              Defines the App Key.
+     * @param  string $hashAlgorithm       Defines the algorithm used to create hashes.
+     * @param  string $encryptionAlgorithm Defines the algorithm to encrypt/decrypt data.
      */
     public function __construct(string $appKey, string $hashAlgorithm = 'sha512', string $encryptionAlgorithm = 'aes128')
     {
@@ -70,12 +70,12 @@ class OpenSSLCryptProvider implements CryptProviderInterface
     /**
      * Makes a session identifier based on the session id.
      *
-     * @param string $sessionId The session id.
+     * @param  string $sessionId The session id.
      * @return string The session identifier.
      */
     public function makeSessionIdentifier(string $sessionId): string
     {
-        $digest = openssl_digest($sessionId.$this->appKey, $this->hashAlgorithm);
+        $digest = openssl_digest($sessionId . $this->appKey, $this->hashAlgorithm);
         if ($digest === false) {
             throw new UnableToHashException();
         }
@@ -85,8 +85,8 @@ class OpenSSLCryptProvider implements CryptProviderInterface
     /**
      * Encrypts the session data.
      *
-     * @param string $sessionId The session id.
-     * @param string $sessionData The session data.
+     * @param  string $sessionId   The session id.
+     * @param  string $sessionData The session data.
      * @return string The encrypted session data.
      */
     public function encryptSessionData(string $sessionId, string $sessionData): string
@@ -104,18 +104,20 @@ class OpenSSLCryptProvider implements CryptProviderInterface
         $encryptionKey = $this->getEncryptionKey($sessionId);
         $encryptedData = openssl_encrypt($sessionData, $this->encryptionAlgorithm, $encryptionKey, 0, $initVector);
 
-        return (string) json_encode([
+        return (string) json_encode(
+            [
             'data' => $encryptedData,
             'initVector' => base64_encode($initVector)
-        ]);
+            ]
+        );
     }
 
     /**
      * Decrypts the session data.
      *
      * @throws UnableToDecryptException
-     * @param string $sessionId The session id.
-     * @param string $sessionData The encrypted session data.
+     * @param  string $sessionId   The session id.
+     * @param  string $sessionData The encrypted session data.
      * @return string The decrypted session data.
      */
     public function decryptSessionData(string $sessionId, string $sessionData): string
@@ -144,12 +146,12 @@ class OpenSSLCryptProvider implements CryptProviderInterface
     /**
      * Calculates the key to be used in the session encryption.
      *
-     * @param string $sessionId Id of the session
+     * @param  string $sessionId Id of the session
      * @return string Encryption key
      */
     private function getEncryptionKey(string $sessionId): string
     {
-        $digest = openssl_digest($this->appKey.$sessionId, $this->hashAlgorithm);
+        $digest = openssl_digest($this->appKey . $sessionId, $this->hashAlgorithm);
         if ($digest === false) {
             throw new UnableToHashException();
         }

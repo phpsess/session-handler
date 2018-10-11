@@ -8,5 +8,4 @@ class UnableToGenerateRandomnessException extends \RuntimeException
 {
 
     protected $message = 'The encryption driver was unable to generate random data do securely encrypt the session data.';
-
 }

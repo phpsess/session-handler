@@ -26,7 +26,7 @@ use Ssess\Storage\StorageInterface;
  * @todo Specify a better session directory and files permissions
  *
  * @package Ssess
- * @author Ayrton Fidelis <ayrton.vargas33@gmail.com>
+ * @author  Ayrton Fidelis <ayrton.vargas33@gmail.com>
  */
 class Ssess implements \SessionHandlerInterface
 {
@@ -51,9 +51,9 @@ class Ssess implements \SessionHandlerInterface
      * It computes the app_key hash and calls the function that handles the strict mode.
      *
      * @param CryptProviderInterface $cryptProvider The driver used to deal with encryption/decryption/hashing.
-     * @param StorageInterface|null $storage The driver used to store the session data.
+     * @param StorageInterface|null  $storage       The driver used to store the session data.
      */
-    public function __construct(CryptProviderInterface $cryptProvider, ?StorageInterface $storage = NULL)
+    public function __construct(CryptProviderInterface $cryptProvider, ?StorageInterface $storage = null)
     {
         $this->cryptProvider = $cryptProvider;
         $this->storageDriver = $storage ? $storage : new Storage\FileStorage();
@@ -99,7 +99,7 @@ class Ssess implements \SessionHandlerInterface
      *
      * @SuppressWarnings(PHPMD.Superglobals)
      *
-     * @see http://php.net/manual/en/features.session.security.management.php#features.session.security.management.non-adaptive-session Why this security measure is important.
+     * @see    http://php.net/manual/en/features.session.security.management.php#features.session.security.management.non-adaptive-session Why this security measure is important.
      * @return void
      */
     private function handleStrict(): void
@@ -130,8 +130,8 @@ class Ssess implements \SessionHandlerInterface
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      *
-     * @param string $savePath The path where the session files will be saved.
-     * @param string $sessionName The name of the session
+     * @param  string $savePath    The path where the session files will be saved.
+     * @param  string $sessionName The name of the session
      * @return bool
      */
     public function open($savePath, $sessionName): bool
@@ -152,7 +152,7 @@ class Ssess implements \SessionHandlerInterface
     /**
      * Return the decrypted (but still serialized) data of the session.
      *
-     * @param string $sessionId Id of the session
+     * @param  string $sessionId Id of the session
      * @return string Decrypted session data (still serialized)
      */
     public function read($sessionId): string
@@ -174,8 +174,8 @@ class Ssess implements \SessionHandlerInterface
     /**
      * Encrypts the session data and saves to the storage;
      *
-     * @param string $sessionId Id of the session
-     * @param string $sessionData Unencrypted session data
+     * @param  string $sessionId   Id of the session
+     * @param  string $sessionData Unencrypted session data
      * @return boolean
      */
     public function write($sessionId, $sessionData): bool
@@ -195,7 +195,7 @@ class Ssess implements \SessionHandlerInterface
     /**
      * Destroys the session.
      *
-     * @param string $sessionId Id of the session
+     * @param  string $sessionId Id of the session
      * @return bool
      */
     public function destroy($sessionId): bool
@@ -217,7 +217,7 @@ class Ssess implements \SessionHandlerInterface
      *
      * @SuppressWarnings(PHPMD.ShortMethodName)
      *
-     * @param int $maxLife The maximum time (in seconds) that a session must be kept.
+     * @param  int $maxLife The maximum time (in seconds) that a session must be kept.
      * @return bool
      */
     public function gc($maxLife): bool
