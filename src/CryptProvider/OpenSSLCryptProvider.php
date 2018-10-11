@@ -36,30 +36,30 @@ class OpenSSLCryptProvider implements CryptProviderInterface
      * @throws \Ssess\Exception\UnknownEncryptionAlgorithmException
      * @throws \Ssess\Exception\UnknownHashAlgorithmException
      * @throws \Ssess\Exception\UnableToHashException
-     * @param string $app_key Defines the App Key.
-     * @param string $hash_algorithm Defines the algorithm used to create hashes.
-     * @param string $encryption_algorithm Defines the algorithm to encrypt/decrypt data.
+     * @param string $appKey Defines the App Key.
+     * @param string $hashAlgorithm Defines the algorithm used to create hashes.
+     * @param string $encryptionAlgorithm Defines the algorithm to encrypt/decrypt data.
      */
-    public function __construct(string $app_key, string $hash_algorithm = 'sha512', string $encryption_algorithm = 'aes128')
+    public function __construct(string $appKey, string $hashAlgorithm = 'sha512', string $encryptionAlgorithm = 'aes128')
     {
-        $this->hashAlgorithm = $hash_algorithm;
-        $this->encryptionAlgorithm = $encryption_algorithm;
+        $this->hashAlgorithm = $hashAlgorithm;
+        $this->encryptionAlgorithm = $encryptionAlgorithm;
 
         if (!extension_loaded('openssl')) {
             throw new OpenSSLNotLoadedException();
         }
 
-        $known_hash_algorithms = openssl_get_md_methods(true);
-        if (!in_array($hash_algorithm, $known_hash_algorithms)) {
+        $hashAlgorithms = openssl_get_md_methods(true);
+        if (!in_array($hashAlgorithm, $hashAlgorithms)) {
             throw new UnknownHashAlgorithmException();
         }
 
-        $known_encryption_algorithms = openssl_get_cipher_methods(true);
-        if (!in_array($encryption_algorithm, $known_encryption_algorithms)) {
+        $encryptionAlgorithms = openssl_get_cipher_methods(true);
+        if (!in_array($encryptionAlgorithm, $encryptionAlgorithms)) {
             throw new UnknownEncryptionAlgorithmException();
         }
 
-        $digest = openssl_digest($app_key, $this->hashAlgorithm);
+        $digest = openssl_digest($appKey, $this->hashAlgorithm);
         if ($digest === false) {
             throw new UnableToHashException();
         }
@@ -70,12 +70,12 @@ class OpenSSLCryptProvider implements CryptProviderInterface
     /**
      * Makes a session identifier based on the session id.
      *
-     * @param string $session_id The session id.
+     * @param string $sessionId The session id.
      * @return string The session identifier.
      */
-    public function makeSessionIdentifier(string $session_id): string
+    public function makeSessionIdentifier(string $sessionId): string
     {
-        $digest = openssl_digest($session_id.$this->appKey, $this->hashAlgorithm);
+        $digest = openssl_digest($sessionId.$this->appKey, $this->hashAlgorithm);
         if ($digest === false) {
             throw new UnableToHashException();
         }
@@ -85,28 +85,28 @@ class OpenSSLCryptProvider implements CryptProviderInterface
     /**
      * Encrypts the session data.
      *
-     * @param string $session_id The session id.
-     * @param string $session_data The session data.
+     * @param string $sessionId The session id.
+     * @param string $sessionData The session data.
      * @return string The encrypted session data.
      */
-    public function encryptSessionData(string $session_id, string $session_data): string
+    public function encryptSessionData(string $sessionId, string $sessionData): string
     {
-        $iv_length = openssl_cipher_iv_length($this->encryptionAlgorithm);
-        if ($iv_length === false) {
+        $ivLength = openssl_cipher_iv_length($this->encryptionAlgorithm);
+        if ($ivLength === false) {
             throw new UnableToGenerateRandomnessException();
         }
 
-        $iv = openssl_random_pseudo_bytes($iv_length);
-        if ($iv === false) {
+        $initVector = openssl_random_pseudo_bytes($ivLength);
+        if ($initVector === false) {
             throw new UnableToGenerateRandomnessException();
         }
 
-        $encryption_key = $this->getEncryptionKey($session_id);
-        $encrypted_data = openssl_encrypt($session_data, $this->encryptionAlgorithm, $encryption_key, 0, $iv);
+        $encryptionKey = $this->getEncryptionKey($sessionId);
+        $encryptedData = openssl_encrypt($sessionData, $this->encryptionAlgorithm, $encryptionKey, 0, $initVector);
 
         return (string) json_encode([
-            'data' => $encrypted_data,
-            'iv' => base64_encode($iv)
+            'data' => $encryptedData,
+            'initVector' => base64_encode($initVector)
         ]);
     }
 
@@ -114,42 +114,42 @@ class OpenSSLCryptProvider implements CryptProviderInterface
      * Decrypts the session data.
      *
      * @throws UnableToDecryptException
-     * @param string $session_id The session id.
-     * @param string $session_data The encrypted session data.
+     * @param string $sessionId The session id.
+     * @param string $sessionData The encrypted session data.
      * @return string The decrypted session data.
      */
-    public function decryptSessionData(string $session_id, string $session_data): string
+    public function decryptSessionData(string $sessionId, string $sessionData): string
     {
-        $encrypted_data = json_decode($session_data);
+        $encryptedData = json_decode($sessionData);
 
-        if (!$encrypted_data) {
+        if (!$encryptedData) {
             return '';
         }
 
-        $iv = base64_decode($encrypted_data->iv);
-        if ($iv === false) {
+        $initVector = base64_decode($encryptedData->initVector);
+        if ($initVector === false) {
             throw new UnableToDecryptException();
         }
 
-        $encryption_key = $this->getEncryptionKey($session_id);
+        $encryptionKey = $this->getEncryptionKey($sessionId);
 
-        $decrypted_data = openssl_decrypt($encrypted_data->data, $this->encryptionAlgorithm, $encryption_key, 0, $iv);
-        if ($decrypted_data === false) {
+        $decryptedData = openssl_decrypt($encryptedData->data, $this->encryptionAlgorithm, $encryptionKey, 0, $initVector);
+        if ($decryptedData === false) {
             throw new UnableToDecryptException();
         }
 
-        return $decrypted_data;
+        return $decryptedData;
     }
 
     /**
      * Calculates the key to be used in the session encryption.
      *
-     * @param string $session_id Id of the session
+     * @param string $sessionId Id of the session
      * @return string Encryption key
      */
-    private function getEncryptionKey(string $session_id): string
+    private function getEncryptionKey(string $sessionId): string
     {
-        $digest = openssl_digest($this->appKey.$session_id, $this->hashAlgorithm);
+        $digest = openssl_digest($this->appKey.$sessionId, $this->hashAlgorithm);
         if ($digest === false) {
             throw new UnableToHashException();
         }

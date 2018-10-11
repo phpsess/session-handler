@@ -24,14 +24,14 @@ class MockStorage implements StorageInterface
      * Saves the encrypted session data to the storage.
      *
      * @throws \Ssess\Exception\UnableToSaveException
-     * @param string $session_identifier The string used to identify the session data.
-     * @param string $session_data The encrypted session data.
+     * @param string $sessionIdentifier The string used to identify the session data.
+     * @param string $sessionData The encrypted session data.
      * @return void
      */
-    public function save(string $session_identifier, string $session_data): void
+    public function save(string $sessionIdentifier, string $sessionData): void
     {
-        self::$files[$session_identifier] = array(
-            'data' => $session_data,
+        self::$files[$sessionIdentifier] = array(
+            'data' => $sessionData,
             'time' => microtime(true)
         );
     }
@@ -41,27 +41,27 @@ class MockStorage implements StorageInterface
      *
      * @throws \Ssess\Exception\SessionNotFoundException
      * @throws \Ssess\Exception\UnableToFetchException
-     * @param string $session_identifier The session identifier
+     * @param string $sessionIdentifier The session identifier
      * @return string The encrypted session data
      */
-    public function get(string $session_identifier): string
+    public function get(string $sessionIdentifier): string
     {
-        if (!$this->sessionExists($session_identifier)) {
+        if (!$this->sessionExists($sessionIdentifier)) {
             throw new SessionNotFoundException();
         }
 
-        return self::$files[$session_identifier]['data'];
+        return self::$files[$sessionIdentifier]['data'];
     }
 
     /**
      * Checks if a session with the given identifier exists in the storage.
      *
-     * @param string $session_identifier The session identifier.
+     * @param string $sessionIdentifier The session identifier.
      * @return boolean Whether the session exists or not.
      */
-    public function sessionExists(string $session_identifier): bool
+    public function sessionExists(string $sessionIdentifier): bool
     {
-        return isset(self::$files[$session_identifier]);
+        return isset(self::$files[$sessionIdentifier]);
     }
 
     /**
@@ -69,24 +69,24 @@ class MockStorage implements StorageInterface
      *
      * @throws \Ssess\Exception\SessionNotFoundException
      * @throws \Ssess\Exception\UnableToDeleteException
-     * @param string $session_identifier The session identifier.
+     * @param string $sessionIdentifier The session identifier.
      * @return void
      */
-    public function destroy(string $session_identifier): void
+    public function destroy(string $sessionIdentifier): void
     {
-        unset(self::$files[$session_identifier]);
+        unset(self::$files[$sessionIdentifier]);
     }
 
     /**
      * Removes the session older than the specified time from the storage.
      *
      * @throws \Ssess\Exception\UnableToDeleteException
-     * @param int $max_life The maximum time (in microseconds) that a session file must be kept.
+     * @param int $maxLife The maximum time (in microseconds) that a session file must be kept.
      * @return void
      */
-    public function clearOld(int $max_life): void
+    public function clearOld(int $maxLife): void
     {
-        $limit = microtime(true) - $max_life / 1000000;
+        $limit = microtime(true) - $maxLife / 1000000;
 
         foreach (self::$files as &$file) {
             if ($file['time'] <= $limit) {

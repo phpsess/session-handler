@@ -16,46 +16,46 @@ interface StorageInterface {
      * Saves the encrypted session data to the storage.
      *
      * @throws \Ssess\Exception\UnableToSaveException
-     * @param string $session_identifier The string used to identify the session data.
-     * @param string $session_data The encrypted session data.
+     * @param string $sessionIdentifier The string used to identify the session data.
+     * @param string $sessionData The encrypted session data.
      * @return void
      */
-    public function save(string $session_identifier, string $session_data): void;
+    public function save(string $sessionIdentifier, string $sessionData): void;
 
     /**
      * Fetches the encrypted session data based on the session identifier.
      *
      * @throws \Ssess\Exception\SessionNotFoundException
      * @throws \Ssess\Exception\UnableToFetchException
-     * @param string $session_identifier The session identifier
+     * @param string $sessionIdentifier The session identifier
      * @return string The encrypted session data
      */
-    public function get(string $session_identifier): string;
+    public function get(string $sessionIdentifier): string;
 
     /**
      * Checks if a session with the given identifier exists in the storage.
      *
-     * @param string $session_identifier The session identifier.
+     * @param string $sessionIdentifier The session identifier.
      * @return boolean Whether the session exists or not.
      */
-    public function sessionExists(string $session_identifier): bool;
+    public function sessionExists(string $sessionIdentifier): bool;
 
     /**
      * Remove this session from the storage.
      *
      * @throws \Ssess\Exception\SessionNotFoundException
      * @throws \Ssess\Exception\UnableToDeleteException
-     * @param string $session_identifier The session identifier.
+     * @param string $sessionIdentifier The session identifier.
      * @return void
      */
-    public function destroy(string $session_identifier): void;
+    public function destroy(string $sessionIdentifier): void;
 
     /**
      * Removes the session older than the specified time from the storage.
      *
      * @throws \Ssess\Exception\UnableToDeleteException
-     * @param int $max_life The maximum time (in microseconds) that a session file must be kept.
+     * @param int $maxLife The maximum time (in microseconds) that a session file must be kept.
      * @return void
      */
-    public function clearOld(int $max_life): void;
+    public function clearOld(int $maxLife): void;
 }

@@ -37,20 +37,20 @@ class FileStorage implements StorageInterface
      * @throws DirectoryNotReadableException
      * @throws DirectoryNotWritableException
      * @throws UnableToCreateDirectoryException
-     * @param string|null $file_path The absolute path to the session files directory. If not set, defaults to INI session.save_path.
-     * @param string $file_prefix The prefix used in the session file name.
+     * @param string|null $filePath The absolute path to the session files directory. If not set, defaults to INI session.save_path.
+     * @param string $filePrefix The prefix used in the session file name.
      */
-    public function __construct(?string $file_path = NULL, string $file_prefix = 'ssess_')
+    public function __construct(?string $filePath = NULL, string $filePrefix = 'ssess_')
     {
-        if (!$file_path) {
-            $file_path = ini_get('session.save_path');
+        if (!$filePath) {
+            $filePath = ini_get('session.save_path');
         }
 
-        if ($file_path === false) {
+        if ($filePath === false) {
             throw new UnableToCreateDirectoryException();
         }
 
-        $this->filePath = $file_path;
+        $this->filePath = $filePath;
 
         if (!file_exists($this->filePath)) {
             if (!mkdir($this->filePath, 0777)) {
@@ -66,27 +66,27 @@ class FileStorage implements StorageInterface
             throw new DirectoryNotWritableException();
         }
 
-        $this->filePrefix = $file_prefix;
+        $this->filePrefix = $filePrefix;
     }
 
     /**
      * Saves the encrypted session data to the storage.
      *
      * @throws \Ssess\Exception\UnableToSaveException
-     * @param string $session_identifier The string used to identify the session data.
-     * @param string $session_data The encrypted session data.
+     * @param string $sessionIdentifier The string used to identify the session data.
+     * @param string $sessionData The encrypted session data.
      * @return void
      */
-    public function save(string $session_identifier, string $session_data): void
+    public function save(string $sessionIdentifier, string $sessionData): void
     {
-        $file_name = $this->getFileName($session_identifier);
+        $fileName = $this->getFileName($sessionIdentifier);
 
         $contents = json_encode(array(
-            'data' => $session_data,
+            'data' => $sessionData,
             'time' => microtime(true)
         ));
 
-        if (@file_put_contents($file_name, $contents) === false) {
+        if (@file_put_contents($fileName, $contents) === false) {
             throw new UnableToSaveException();
         }
     }
@@ -96,19 +96,19 @@ class FileStorage implements StorageInterface
      *
      * @throws \Ssess\Exception\SessionNotFoundException
      * @throws \Ssess\Exception\UnableToFetchException
-     * @param string $session_identifier The session identifier
+     * @param string $sessionIdentifier The session identifier
      * @return string The encrypted session data
      */
-    public function get(string $session_identifier): string
+    public function get(string $sessionIdentifier): string
     {
-        $file_name = $this->getFileName($session_identifier);
+        $fileName = $this->getFileName($sessionIdentifier);
 
-        if (!$this->sessionExists($session_identifier)) {
+        if (!$this->sessionExists($sessionIdentifier)) {
             throw new SessionNotFoundException();
         }
 
         try {
-            $contents = (string) file_get_contents($file_name);
+            $contents = (string) file_get_contents($fileName);
         } catch (\Exception $e) {
             throw new UnableToFetchException();
         }
@@ -125,16 +125,16 @@ class FileStorage implements StorageInterface
     /**
      * Checks if a session with the given identifier exists in the storage.
      *
-     * @param string $session_identifier The session identifier.
+     * @param string $sessionIdentifier The session identifier.
      * @return boolean Whether the session exists or not.
      */
-    public function sessionExists(string $session_identifier): bool
+    public function sessionExists(string $sessionIdentifier): bool
     {
-        $file_name = $this->getFileName($session_identifier);
+        $fileName = $this->getFileName($sessionIdentifier);
 
-        clearstatcache(true, $file_name);
+        clearstatcache(true, $fileName);
 
-        return file_exists($file_name);
+        return file_exists($fileName);
     }
 
     /**
@@ -142,32 +142,32 @@ class FileStorage implements StorageInterface
      *
      * @throws \Ssess\Exception\SessionNotFoundException
      * @throws \Ssess\Exception\UnableToDeleteException
-     * @param string $session_identifier The session identifier.
+     * @param string $sessionIdentifier The session identifier.
      * @return void
      */
-    public function destroy(string $session_identifier): void
+    public function destroy(string $sessionIdentifier): void
     {
-        if (!$this->sessionExists($session_identifier)) {
+        if (!$this->sessionExists($sessionIdentifier)) {
             throw new SessionNotFoundException();
         }
 
-        $file_name = $this->getFileName($session_identifier);
+        $fileName = $this->getFileName($sessionIdentifier);
 
-        if (!@unlink($file_name)) {
+        if (!@unlink($fileName)) {
             throw new UnableToDeleteException();
         }
 
-        clearstatcache(true, $file_name);
+        clearstatcache(true, $fileName);
     }
 
     /**
      * Removes the session older than the specified time from the storage.
      *
      * @throws \Ssess\Exception\UnableToDeleteException
-     * @param int $max_life The maximum time (in microseconds) that a session file must be kept.
+     * @param int $maxLife The maximum time (in microseconds) that a session file must be kept.
      * @return void
      */
-    public function clearOld(int $max_life): void
+    public function clearOld(int $maxLife): void
     {
         $files = scandir($this->filePath);
 
@@ -175,24 +175,24 @@ class FileStorage implements StorageInterface
             throw new UnableToDeleteException();
         }
 
-        $limit_time = microtime(true) - $max_life / 1000000;
+        $limitTime = microtime(true) - $maxLife / 1000000;
 
-        $has_error = false;
+        $hasError = false;
         foreach ($files as $file) {
-            $full_path = "$this->filePath/$file";
+            $fullPath = "$this->filePath/$file";
 
-            if (!$this->shouldBeCleared($full_path, $file, $this->filePrefix, $limit_time)) {
+            if (!$this->shouldBeCleared($fullPath, $file, $this->filePrefix, $limitTime)) {
                 continue;
             }
 
             if (!@unlink("$this->filePath/$file")) {
-                $has_error = true;
+                $hasError = true;
             }
 
-            clearstatcache(true, $full_path);
+            clearstatcache(true, $fullPath);
         }
 
-        if ($has_error) {
+        if ($hasError) {
             throw new UnableToDeleteException();
         }
     }
@@ -200,32 +200,32 @@ class FileStorage implements StorageInterface
     /**
      * Checks whether a file should be removed by clearOld or not
      *
-     * @param string $full_path The absolute path to the file
-     * @param string $file_name Only the name of the file
+     * @param string $fullPath The absolute path to the file
+     * @param string $fileName Only the name of the file
      * @param string $prefix The prefix of the session files
-     * @param float $limit_time The maximum timestamp (in microseconds) a file can be kept
+     * @param float $limitTime The maximum timestamp (in microseconds) a file can be kept
      * @return bool If the file should be cleared or not
      */
-    private function shouldBeCleared(string $full_path, string $file_name, string $prefix, float $limit_time): bool
+    private function shouldBeCleared(string $fullPath, string $fileName, string $prefix, float $limitTime): bool
     {
-        if (strpos($file_name, $prefix) !== 0) {
+        if (strpos($fileName, $prefix) !== 0) {
             return false;
         }
 
-        clearstatcache(true, $full_path);
+        clearstatcache(true, $fullPath);
 
-        if (!is_file($full_path)) {
+        if (!is_file($fullPath)) {
             return false;
         }
 
-        $contents = @file_get_contents($full_path);
+        $contents = @file_get_contents($fullPath);
         if ($contents === false) {
             throw new UnableToDeleteException();
         }
 
         $content = json_decode($contents);
 
-        if ($content->time > $limit_time) {
+        if ($content->time > $limitTime) {
             return false;
         }
 
@@ -235,12 +235,12 @@ class FileStorage implements StorageInterface
     /**
      * Mounts the absolute file name.
      *
-     * @param string $session_identifier The session identifier
+     * @param string $sessionIdentifier The session identifier
      * @return string The absolute file name.
      */
-    private function getFileName(string $session_identifier): string
+    private function getFileName(string $sessionIdentifier): string
     {
-        return $this->filePath . '/' . $this->filePrefix . $session_identifier;
+        return $this->filePath . '/' . $this->filePrefix . $sessionIdentifier;
     }
 
 }

@@ -50,12 +50,12 @@ class Ssess implements \SessionHandlerInterface
      *
      * It computes the app_key hash and calls the function that handles the strict mode.
      *
-     * @param CryptProviderInterface $crypt_provider The driver used to deal with encryption/decryption/hashing.
+     * @param CryptProviderInterface $cryptProvider The driver used to deal with encryption/decryption/hashing.
      * @param StorageInterface|null $storage The driver used to store the session data.
      */
-    public function __construct(CryptProviderInterface $crypt_provider, ?StorageInterface $storage = NULL)
+    public function __construct(CryptProviderInterface $cryptProvider, ?StorageInterface $storage = NULL)
     {
-        $this->cryptProvider = $crypt_provider;
+        $this->cryptProvider = $cryptProvider;
         $this->storageDriver = $storage ? $storage : new Storage\FileStorage();
 
         $this->warnInsecureSettings();
@@ -97,6 +97,8 @@ class Ssess implements \SessionHandlerInterface
     /**
      * Rejects arbitrary session ids.
      *
+     * @SuppressWarnings(PHPMD.Superglobals)
+     *
      * @see http://php.net/manual/en/features.session.security.management.php#features.session.security.management.non-adaptive-session Why this security measure is important.
      * @return void
      */
@@ -106,31 +108,33 @@ class Ssess implements \SessionHandlerInterface
             return;
         }
 
-        $cookie_name = session_name();
-        if (empty($_COOKIE[$cookie_name])) {
+        $cookieName = session_name();
+        if (empty($_COOKIE[$cookieName])) {
             return;
         }
 
-        $session_id = $_COOKIE[$cookie_name];
+        $sessionId = $_COOKIE[$cookieName];
 
-        $identifier = $this->cryptProvider->makeSessionIdentifier($session_id);
+        $identifier = $this->cryptProvider->makeSessionIdentifier($sessionId);
 
         if ($this->storageDriver->sessionExists($identifier)) {
             return;
         }
 
-        $new_session_id = session_create_id();
-        session_id($new_session_id);
+        $newSessionId = session_create_id();
+        session_id($newSessionId);
     }
 
     /**
      * Opens the session.
      *
-     * @param string $save_path The path where the session files will be saved.
-     * @param string $session_name The name of the session
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
+     * @param string $savePath The path where the session files will be saved.
+     * @param string $sessionName The name of the session
      * @return bool
      */
-    public function open($save_path, $session_name): bool
+    public function open($savePath, $sessionName): bool
     {
         return true;
     }
@@ -148,12 +152,12 @@ class Ssess implements \SessionHandlerInterface
     /**
      * Return the decrypted (but still serialized) data of the session.
      *
-     * @param string $session_id Id of the session
+     * @param string $sessionId Id of the session
      * @return string Decrypted session data (still serialized)
      */
-    public function read($session_id): string
+    public function read($sessionId): string
     {
-        $identifier = $this->cryptProvider->makeSessionIdentifier($session_id);
+        $identifier = $this->cryptProvider->makeSessionIdentifier($sessionId);
 
         if (!$this->storageDriver->sessionExists($identifier)) {
             return '';
@@ -164,21 +168,21 @@ class Ssess implements \SessionHandlerInterface
             return '';
         }
 
-        return $this->cryptProvider->decryptSessionData($session_id, $content);
+        return $this->cryptProvider->decryptSessionData($sessionId, $content);
     }
 
     /**
      * Encrypts the session data and saves to the storage;
      *
-     * @param string $session_id Id of the session
-     * @param string $session_data Unencrypted session data
+     * @param string $sessionId Id of the session
+     * @param string $sessionData Unencrypted session data
      * @return boolean
      */
-    public function write($session_id, $session_data): bool
+    public function write($sessionId, $sessionData): bool
     {
-        $identifier = $this->cryptProvider->makeSessionIdentifier($session_id);
+        $identifier = $this->cryptProvider->makeSessionIdentifier($sessionId);
 
-        $content = $this->cryptProvider->encryptSessionData($session_id, $session_data);
+        $content = $this->cryptProvider->encryptSessionData($sessionId, $sessionData);
 
         try {
             $this->storageDriver->save($identifier, $content);
@@ -191,12 +195,12 @@ class Ssess implements \SessionHandlerInterface
     /**
      * Destroys the session.
      *
-     * @param string $session_id Id of the session
+     * @param string $sessionId Id of the session
      * @return bool
      */
-    public function destroy($session_id): bool
+    public function destroy($sessionId): bool
     {
-        $identifier = $this->cryptProvider->makeSessionIdentifier($session_id);
+        $identifier = $this->cryptProvider->makeSessionIdentifier($sessionId);
 
         try {
             $this->storageDriver->destroy($identifier);
@@ -211,13 +215,15 @@ class Ssess implements \SessionHandlerInterface
      *
      * (GC stands for Garbage Collector)
      *
-     * @param int $max_life The maximum time (in seconds) that a session must be kept.
+     * @SuppressWarnings(PHPMD.ShortMethodName)
+     *
+     * @param int $maxLife The maximum time (in seconds) that a session must be kept.
      * @return bool
      */
-    public function gc($max_life): bool
+    public function gc($maxLife): bool
     {
         try {
-            $this->storageDriver->clearOld($max_life * 1000000);
+            $this->storageDriver->clearOld($maxLife * 1000000);
             return true;
         } catch (\Exception $e) {
             return false;

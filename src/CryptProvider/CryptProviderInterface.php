@@ -11,36 +11,36 @@ interface CryptProviderInterface {
      *
      * @throws \Ssess\Exception\UnknownEncryptionAlgorithmException
      * @throws \Ssess\Exception\UnknownHashAlgorithmException
-     * @param string $app_key Defines the App Key.
-     * @param string $hash_algorithm Defines the algorithm used to create hashes.
-     * @param string $encryption_algorithm Defines the algorithm to encrypt/decrypt data.
+     * @param string $appKey Defines the App Key.
+     * @param string $hashAlgorithm Defines the algorithm used to create hashes.
+     * @param string $encryptionAlgorithm Defines the algorithm to encrypt/decrypt data.
      */
-    public function __construct(string $app_key, string $hash_algorithm, string $encryption_algorithm);
+    public function __construct(string $appKey, string $hashAlgorithm, string $encryptionAlgorithm);
 
     /**
      * Makes a session identifier based on the session id.
      *
-     * @param string $session_id The session id.
+     * @param string $sessionId The session id.
      * @return string The session identifier.
      */
-    public function makeSessionIdentifier(string $session_id): string ;
+    public function makeSessionIdentifier(string $sessionId): string ;
 
     /**
      * Encrypts the session data.
      *
-     * @param string $session_id The session id.
-     * @param string $session_data The session data.
+     * @param string $sessionId The session id.
+     * @param string $sessionData The session data.
      * @return string The encrypted session data.
      */
-    public function encryptSessionData(string $session_id, string $session_data): string ;
+    public function encryptSessionData(string $sessionId, string $sessionData): string ;
 
     /**
      * Decrypts the session data.
      *
      * @throws \Ssess\Exception\UnableToDecryptException
-     * @param string $session_id The session id.
-     * @param string $session_data The encrypted session data.
+     * @param string $sessionId The session id.
+     * @param string $sessionData The encrypted session data.
      * @return string The decrypted session data.
      */
-    public function decryptSessionData(string $session_id, string $session_data): string ;
+    public function decryptSessionData(string $sessionId, string $sessionData): string ;
 }
