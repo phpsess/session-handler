@@ -8,6 +8,7 @@ use Ssess\Exception\DirectoryNotWritableException;
 use Ssess\Exception\DirectoryNotReadableException;
 use Ssess\Exception\UnableToSaveException;
 use Ssess\Exception\UnableToDeleteException;
+use Ssess\Exception\UnableToCreateDirectoryException;
 
 use PHPUnit\Framework\TestCase;
 use org\bovigo\vfs\vfsStream;
@@ -203,6 +204,43 @@ final class FileStorageTest extends TestCase
         $exists = $file_storage->sessionExists($identifier);
 
         $this->assertTrue($exists);
+    }
+
+    public function testCantFigureOutPath()
+    {
+        ini_set('session.save_path', '');
+
+        $this->expectException(UnableToCreateDirectoryException::class);
+
+        new FileStorage();
+    }
+
+    public function testNoPermissionToCreatePath()
+    {
+        $path = ini_get('session.save_path');
+
+        $forbiddenPath = "$path/forbidden";
+
+        mkdir($forbiddenPath, 0444);
+
+        $sessionPath = "$forbiddenPath/sessions";
+
+        $this->expectException(UnableToCreateDirectoryException::class);
+
+        new FileStorage($sessionPath);
+    }
+
+    public function testNoPermissionToClear()
+    {
+        $path = ini_get('session.save_path');
+
+        $fileStorage = new FileStorage();
+
+        chmod($path, 0111);
+
+        $this->expectException(UnableToDeleteException::class);
+
+        $fileStorage->clearOld(0);
     }
 
 }

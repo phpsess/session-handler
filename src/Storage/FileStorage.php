@@ -46,14 +46,14 @@ class FileStorage implements StorageInterface
             $filePath = ini_get('session.save_path');
         }
 
-        if ($filePath === false) {
+        if (!$filePath) {
             throw new UnableToCreateDirectoryException();
         }
 
         $this->filePath = $filePath;
 
         if (!file_exists($this->filePath)) {
-            if (!mkdir($this->filePath, 0777)) {
+            if (!@mkdir($this->filePath, 0777)) {
                 throw new UnableToCreateDirectoryException();
             }
         }
@@ -171,7 +171,7 @@ class FileStorage implements StorageInterface
      */
     public function clearOld(int $maxLife): void
     {
-        $files = scandir($this->filePath);
+        $files = @scandir($this->filePath);
 
         if ($files === false) {
             throw new UnableToDeleteException();
