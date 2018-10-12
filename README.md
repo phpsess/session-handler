@@ -24,10 +24,20 @@ This package implements the PHP `SessionHandlerInterface`, so you just have to s
 
 ```
 use Ssess\Ssess;
+use Ssess\CryptProvider\OpenSSlCryptProvider;
+use Ssess\Storage\FileStorage;
 
-$Ssess = new Ssess('a-strong-random-SECRET-app-key');
+// The driver responsible for encryption, decription and hashing
+$cryptProvider = new OpenSSLCryptProvider('a-strong-random-SECRET-app-key');
 
-session_set_save_handler($Ssess);
+// The driver responsible for storing the data
+$storage = new FileStorage();
+
+// Build the Session Handler
+$ssess = new Ssess($cryptProvider, $storage);
+
+// Set the Ssess as the defaul session handler
+session_set_save_handler($ssess);
 ```
 
 After registering, you can use the `$_SESSION` superglobal as always:
