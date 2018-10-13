@@ -1,11 +1,10 @@
 # SSess
 A security-first PHP session handler
 
-[![Build Status](https://travis-ci.com/ayrtonvwf/ssess.svg?branch=master)](https://travis-ci.com/ayrtonvwf/ssess)
-![GitHub](https://img.shields.io/github/license/ayrtonvwf/ssess.svg)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/ayrtonvwf/ssess/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/ayrtonvwf/ssess/?branch=master)
-[![Maintainability](https://api.codeclimate.com/v1/badges/37e7f8ce667e4c900bed/maintainability)](https://codeclimate.com/github/ayrtonvwf/ssess/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/37e7f8ce667e4c900bed/test_coverage)](https://codeclimate.com/github/ayrtonvwf/ssess/test_coverage)
+[![Build Status](https://travis-ci.com/phpsess/ssess.svg?branch=master)](https://travis-ci.com/phpsess/ssess)
+![GitHub](https://img.shields.io/github/license/phpsess/ssess.svg)
+[![Maintainability](https://api.codeclimate.com/v1/badges/7add035b460a215a577e/maintainability)](https://codeclimate.com/github/phpsess/ssess/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/7add035b460a215a577e/test_coverage)](https://codeclimate.com/github/phpsess/ssess/test_coverage)
 
 ## What it does
 - Encrypts the session data in such a way that even if you have access to the session files,
