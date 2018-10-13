@@ -9,7 +9,7 @@ use PHPSess\Exception\UseStrictModeDisabledException;
 use PHPSess\Exception\UseCookiesDisabledException;
 use PHPSess\Exception\UseOnlyCookiesDisabledException;
 use PHPSess\Exception\UseTransSidEnabledException;
-use PHPSess\Storage\StorageInterface;
+use PHPSess\Interfaces\StorageInterface;
 
 use SessionHandlerInterface;
 use Exception;

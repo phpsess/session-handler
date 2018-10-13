@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace PHPSess\Storage;
+namespace PHPSess\Interfaces;
 
 /**
- * Interface StorageInterface
+ * Interface for storage drivers
  *
- * @package PHPSess\Storage
+ * @package PHPSess\Interfaces
  * @author  Ayrton Fidelis <ayrton.vargas33@gmail.com>
  */
 interface StorageInterface
