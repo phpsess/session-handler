@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace PHPSess;
 
-use PHPSess\CryptProvider\CryptProviderInterface;
+use PHPSess\Interfaces\StorageInterface;
+use PHPSess\Interfaces\EncryptionInterface;
+
 use PHPSess\Exception\UseStrictModeDisabledException;
 use PHPSess\Exception\UseCookiesDisabledException;
 use PHPSess\Exception\UseOnlyCookiesDisabledException;
 use PHPSess\Exception\UseTransSidEnabledException;
-use PHPSess\Interfaces\StorageInterface;
 
 use SessionHandlerInterface;
 use Exception;
@@ -44,7 +45,7 @@ class SessionHandler implements SessionHandlerInterface
     private $storageDriver;
 
     /**
-     * @var CryptProviderInterface $cryptProvider The driver used to deal with encryption/decryption/hashing.
+     * @var EncryptionInterface $cryptProvider The driver used to deal with encryption/decryption/hashing.
      */
     private $cryptProvider;
 
@@ -53,10 +54,10 @@ class SessionHandler implements SessionHandlerInterface
      *
      * It computes the app_key hash and calls the function that handles the strict mode.
      *
-     * @param CryptProviderInterface    $cryptProvider  The driver used to deal with encryption/decryption/hashing.
-     * @param StorageInterface          $storage        The driver used to store the session data.
+     * @param EncryptionInterface   $cryptProvider  The driver used to deal with encryption/decryption/hashing.
+     * @param StorageInterface      $storage        The driver used to store the session data.
      */
-    public function __construct(CryptProviderInterface $cryptProvider, StorageInterface $storage)
+    public function __construct(EncryptionInterface $cryptProvider, StorageInterface $storage)
     {
         $this->cryptProvider = $cryptProvider;
         $this->storageDriver = $storage;

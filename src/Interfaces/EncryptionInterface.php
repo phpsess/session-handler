@@ -2,13 +2,19 @@
 
 declare(strict_types=1);
 
-namespace PHPSess\CryptProvider;
+namespace PHPSess\Interfaces;
 
-interface CryptProviderInterface
+/**
+ * Interface for encryption/hashing drivers
+ *
+ * @package PHPSess\Interfaces
+ * @author  Ayrton Fidelis <ayrton.vargas33@gmail.com>
+ */
+interface EncryptionInterface
 {
 
     /**
-     * CryptProviderInterface constructor.
+     * EncryptionInterface constructor.
      *
      * @throws \PHPSess\Exception\UnknownEncryptionAlgorithmException
      * @throws \PHPSess\Exception\UnknownHashAlgorithmException

@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace PHPSess\Tests;
 
 use PHPSess\SessionHandler;
-use PHPSess\CryptProvider\OpenSSLCryptProvider;
+use PHPSess\Encryption\OpenSSLEncryption;
 use PHPSess\Storage\MockStorage;
 
 use PHPSess\Exception\UseStrictModeDisabledException;
@@ -225,7 +225,7 @@ final class SessionHandlerTest extends TestCase
 
     private function initSecureSession($key = 'testKey')
     {
-        $crypt_provider = new OpenSSLCryptProvider($key);
+        $crypt_provider = new OpenSSLEncryption($key);
         $storage = new MockStorage();
 
         $ssess = new SessionHandler($crypt_provider, $storage);

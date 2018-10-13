@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "95849de3cc53f9b7d6fc7962771735d2",
+    "content-hash": "16f2980c606bee29cba8be62a8ab26bf",
     "packages": [],
     "packages-dev": [
         {
@@ -1229,6 +1229,50 @@
             ],
             "description": "A mock storage driver for PHPSess",
             "time": "2018-10-13T20:11:51+00:00"
+        },
+        {
+            "name": "phpsess/openssl-encryption",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpsess/openssl-encryption.git",
+                "reference": "8a5883cdba380db4254fd1e0f8a2b52e9ca6d58b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpsess/openssl-encryption/zipball/8a5883cdba380db4254fd1e0f8a2b52e9ca6d58b",
+                "reference": "8a5883cdba380db4254fd1e0f8a2b52e9ca6d58b",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "ext-openssl": "*",
+                "php": ">=7.1"
+            },
+            "require-dev": {
+                "phpmd/phpmd": "^2.6",
+                "phpstan/phpstan": "^0.10.3",
+                "phpunit/phpunit": "^7",
+                "squizlabs/php_codesniffer": "^3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PHPSess\\Encryption\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ayrton Fidelis",
+                    "email": "ayrton.vargas33@gmail.com"
+                }
+            ],
+            "description": "A OpenSSL encryption driver for PHPSess",
+            "time": "2018-10-13T21:23:42+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -2966,7 +3010,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "phpsess/mock-storage": 20
+        "phpsess/mock-storage": 20,
+        "phpsess/openssl-encryption": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
