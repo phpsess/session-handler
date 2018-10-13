@@ -2,7 +2,7 @@
 A security-first PHP session handler
 
 [![Build Status](https://travis-ci.com/phpsess/ssess.svg?branch=master)](https://travis-ci.com/phpsess/ssess)
-![GitHub](https://img.shields.io/github/license/phpsess/ssess.svg)
+[![License](https://img.shields.io/github/license/phpsess/ssess.svg)](https://opensource.org/licenses/MIT)
 [![Maintainability](https://api.codeclimate.com/v1/badges/7add035b460a215a577e/maintainability)](https://codeclimate.com/github/phpsess/ssess/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/7add035b460a215a577e/test_coverage)](https://codeclimate.com/github/phpsess/ssess/test_coverage)
 
