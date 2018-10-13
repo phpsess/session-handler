@@ -1,10 +1,10 @@
-# SSess
-A security-first PHP session handler
+# PHPSess - Session Handler
+PHP Session. The way it should be.
 
-[![Build Status](https://travis-ci.com/phpsess/ssess.svg?branch=master)](https://travis-ci.com/phpsess/ssess)
-[![License](https://img.shields.io/github/license/phpsess/ssess.svg)](https://opensource.org/licenses/MIT)
-[![Maintainability](https://api.codeclimate.com/v1/badges/7add035b460a215a577e/maintainability)](https://codeclimate.com/github/phpsess/ssess/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/7add035b460a215a577e/test_coverage)](https://codeclimate.com/github/phpsess/ssess/test_coverage)
+[![Build Status](https://travis-ci.com/phpsess/session-handler.svg?branch=master)](https://travis-ci.com/phpsess/session-handler)
+[![License](https://img.shields.io/github/license/phpsess/session-handler.svg)](https://opensource.org/licenses/MIT)
+[![Maintainability](https://api.codeclimate.com/v1/badges/17ffcc017acb054fd644/maintainability)](https://codeclimate.com/github/phpsess/session-handler/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/17ffcc017acb054fd644/test_coverage)](https://codeclimate.com/github/phpsess/session-handler/test_coverage)
 
 ## What it does
 - Encrypts the session data in such a way that even if you have access to the session files,
@@ -17,15 +17,15 @@ instead of accepting arbitrary ids from the request;
 Require this package with composer:
 
 ```
-composer require ayrtonvwf/ssess
+composer require phpsess/session-handler
 ```
 
 This package implements the PHP `SessionHandlerInterface`, so you just have to set it as the current session handler:
 
 ```
-use Ssess\Ssess;
-use Ssess\CryptProvider\OpenSSlCryptProvider;
-use Ssess\Storage\FileStorage;
+use PHPSess\SessionHandler;
+use PHPSess\Storage\FileStorage;
+use PHPSess\CryptProvider\OpenSSlCryptProvider;
 
 // The driver responsible for encryption, decription and hashing
 $cryptProvider = new OpenSSLCryptProvider('a-strong-random-SECRET-app-key');
@@ -34,10 +34,10 @@ $cryptProvider = new OpenSSLCryptProvider('a-strong-random-SECRET-app-key');
 $storage = new FileStorage();
 
 // Build the Session Handler
-$ssess = new Ssess($cryptProvider, $storage);
+$sessionHandler = new SessionHandler($cryptProvider, $storage);
 
-// Set the Ssess as the defaul session handler
-session_set_save_handler($ssess);
+// Set PHPSess as the defaul session handler
+session_set_save_handler($sessionHandler);
 ```
 
 After registering, you can use the `$_SESSION` superglobal as always:
@@ -61,7 +61,7 @@ able to decrypt those files without the app-key.
 
 ## Before vs after
 
-### Without Ssess:
+### Without PHPSess:
 ```
 Session Id: 4071pvir7unh8h4b5fap616qpv
 $_COOKIE['PHPSESSID']: 4071pvir7unh8h4b5fap616qpv
@@ -69,7 +69,7 @@ Session File Name: sess_4071pvir7unh8h4b5fap616qpv
 Session File Content: mypass|s:14:"secretPassword";
 ```
 
-### With Ssess:
+### With PHPSess:
 ```
 Session Id: 4lpulumbs16edgq438r7dn16sj
 $_COOKIE['PHPSESSID']: 4lpulumbs16edgq438r7dn16sj

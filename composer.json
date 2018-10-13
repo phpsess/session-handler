@@ -1,5 +1,5 @@
 {
-    "name": "ayrtonvwf/ssess",
+    "name": "phpsess/session-handler",
     "description": "A security-first PHP session handler",
     "type": "library",
     "version": "0.0.1-beta",
@@ -17,7 +17,7 @@
     ],
     "autoload": {
         "psr-4": {
-            "Ssess\\": "src/"
+            "PHPSess\\": "src/"
         }
     },
     "require-dev": {

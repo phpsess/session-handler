@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ssess\Exception;
+namespace PHPSess\Exception;
 
 class UnknownHashAlgorithmException extends \RuntimeException
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Ssess\CryptProvider;
+namespace PHPSess\CryptProvider;
 
 interface CryptProviderInterface
 {
@@ -10,8 +10,8 @@ interface CryptProviderInterface
     /**
      * CryptProviderInterface constructor.
      *
-     * @throws \Ssess\Exception\UnknownEncryptionAlgorithmException
-     * @throws \Ssess\Exception\UnknownHashAlgorithmException
+     * @throws \PHPSess\Exception\UnknownEncryptionAlgorithmException
+     * @throws \PHPSess\Exception\UnknownHashAlgorithmException
      * @param  string $appKey              Defines the App Key.
      * @param  string $hashAlgorithm       Defines the algorithm used to create hashes.
      * @param  string $encryptionAlgorithm Defines the algorithm to encrypt/decrypt data.
@@ -38,7 +38,7 @@ interface CryptProviderInterface
     /**
      * Decrypts the session data.
      *
-     * @throws \Ssess\Exception\UnableToDecryptException
+     * @throws \PHPSess\Exception\UnableToDecryptException
      * @param  string $sessionId   The session id.
      * @param  string $sessionData The encrypted session data.
      * @return string The decrypted session data.

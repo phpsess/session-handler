@@ -2,23 +2,23 @@
 
 declare(strict_types=1);
 
-namespace Ssess\Tests;
+namespace PHPSess\Tests;
 
-use Ssess\Ssess;
-use Ssess\CryptProvider\OpenSSLCryptProvider;
-use Ssess\Storage\MockStorage;
+use PHPSess\SessionHandler;
+use PHPSess\CryptProvider\OpenSSLCryptProvider;
+use PHPSess\Storage\MockStorage;
 
-use Ssess\Exception\UseStrictModeDisabledException;
-use Ssess\Exception\UseCookiesDisabledException;
-use Ssess\Exception\UseOnlyCookiesDisabledException;
-use Ssess\Exception\UseTransSidEnabledException;
+use PHPSess\Exception\UseStrictModeDisabledException;
+use PHPSess\Exception\UseCookiesDisabledException;
+use PHPSess\Exception\UseOnlyCookiesDisabledException;
+use PHPSess\Exception\UseTransSidEnabledException;
 
 use PHPUnit\Framework\TestCase;
 
 /**
  * @runTestsInSeparateProcesses
  */
-final class SsessTest extends TestCase
+final class SessionHandlerTest extends TestCase
 {
 
     public function setUp()
@@ -104,7 +104,7 @@ final class SsessTest extends TestCase
         ini_set('session.use_only_cookies', '0');
         ini_set('session.use_trans_sid', '1');
 
-        Ssess::$warnInsecureSettings = false;
+        SessionHandler::$warnInsecureSettings = false;
 
         $exception = null;
         try {
@@ -117,7 +117,7 @@ final class SsessTest extends TestCase
 
     public function testIgnoreSessionFixation()
     {
-        Ssess::$warnInsecureSettings = false;
+        SessionHandler::$warnInsecureSettings = false;
 
         ini_set('session.use_strict_mode', '0');
 
@@ -228,7 +228,7 @@ final class SsessTest extends TestCase
         $crypt_provider = new OpenSSLCryptProvider($key);
         $storage = new MockStorage();
 
-        $ssess = new Ssess($crypt_provider, $storage);
+        $ssess = new SessionHandler($crypt_provider, $storage);
 
         session_set_save_handler($ssess);
 

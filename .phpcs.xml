@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <ruleset name="PHP_CodeSniffer">
-    <description>The coding standard for Ssess.</description>
+    <description>The coding standard for PHPSess.</description>
 
     <file>src</file>
     <file>tests</file>

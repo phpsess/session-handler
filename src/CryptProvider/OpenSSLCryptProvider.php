@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Ssess\CryptProvider;
+namespace PHPSess\CryptProvider;
 
-use Ssess\Exception\OpenSSLNotLoadedException;
-use Ssess\Exception\UnableToDecryptException;
-use Ssess\Exception\UnknownEncryptionAlgorithmException;
-use Ssess\Exception\UnknownHashAlgorithmException;
+use PHPSess\Exception\OpenSSLNotLoadedException;
+use PHPSess\Exception\UnableToDecryptException;
+use PHPSess\Exception\UnknownEncryptionAlgorithmException;
+use PHPSess\Exception\UnknownHashAlgorithmException;
 
 class OpenSSLCryptProvider implements CryptProviderInterface
 {
@@ -30,9 +30,9 @@ class OpenSSLCryptProvider implements CryptProviderInterface
     /**
      * CryptProviderInterface constructor.
      *
-     * @throws \Ssess\Exception\OpenSSLNotLoadedException
-     * @throws \Ssess\Exception\UnknownEncryptionAlgorithmException
-     * @throws \Ssess\Exception\UnknownHashAlgorithmException
+     * @throws \PHPSess\Exception\OpenSSLNotLoadedException
+     * @throws \PHPSess\Exception\UnknownEncryptionAlgorithmException
+     * @throws \PHPSess\Exception\UnknownHashAlgorithmException
      * @param  string $appKey              Defines the App Key.
      * @param  string $hashAlgorithm       Defines the algorithm used to create hashes.
      * @param  string $encryptionAlgorithm Defines the algorithm to encrypt/decrypt data.

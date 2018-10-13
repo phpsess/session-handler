@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Ssess\Tests;
+namespace PHPSess\Tests;
 
-use Ssess\Storage\MockStorage;
+use PHPSess\Storage\MockStorage;
 
 use PHPUnit\Framework\TestCase;
-use Ssess\Exception\SessionNotFoundException;
+use PHPSess\Exception\SessionNotFoundException;
 
 final class MockStorageTest extends TestCase
 {

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Ssess\Tests;
+namespace PHPSess\Tests;
 
-use Ssess\CryptProvider\OpenSSLCryptProvider;
-use Ssess\Exception\UnknownHashAlgorithmException;
-use Ssess\Exception\UnknownEncryptionAlgorithmException;
-use Ssess\Exception\UnableToDecryptException;
+use PHPSess\CryptProvider\OpenSSLCryptProvider;
+use PHPSess\Exception\UnknownHashAlgorithmException;
+use PHPSess\Exception\UnknownEncryptionAlgorithmException;
+use PHPSess\Exception\UnableToDecryptException;
 
 use PHPUnit\Framework\TestCase;
 

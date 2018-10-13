@@ -2,14 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Ssess;
+namespace PHPSess;
 
-use Ssess\CryptProvider\CryptProviderInterface;
-use Ssess\Exception\UseStrictModeDisabledException;
-use Ssess\Exception\UseCookiesDisabledException;
-use Ssess\Exception\UseOnlyCookiesDisabledException;
-use Ssess\Exception\UseTransSidEnabledException;
-use Ssess\Storage\StorageInterface;
+use PHPSess\CryptProvider\CryptProviderInterface;
+use PHPSess\Exception\UseStrictModeDisabledException;
+use PHPSess\Exception\UseCookiesDisabledException;
+use PHPSess\Exception\UseOnlyCookiesDisabledException;
+use PHPSess\Exception\UseTransSidEnabledException;
+use PHPSess\Storage\StorageInterface;
+
+use SessionHandlerInterface;
+use Exception;
 
 /**
  * Handles the session in a secure way.
@@ -25,10 +28,10 @@ use Ssess\Storage\StorageInterface;
  * @todo Provide a storage driver interface (such as file, mysqli, pdo, redis, memcached, etc)
  * @todo Specify a better session directory and files permissions
  *
- * @package Ssess
+ * @package PHPSess
  * @author  Ayrton Fidelis <ayrton.vargas33@gmail.com>
  */
-class Ssess implements \SessionHandlerInterface
+class SessionHandler implements SessionHandlerInterface
 {
     /**
      * @var boolean $warnInsecureSettings Whether the handler should warn about insecure settings or not.
@@ -46,7 +49,7 @@ class Ssess implements \SessionHandlerInterface
     private $cryptProvider;
 
     /**
-     * Ssess constructor.
+     * PHPSess constructor.
      *
      * It computes the app_key hash and calls the function that handles the strict mode.
      *
@@ -187,7 +190,7 @@ class Ssess implements \SessionHandlerInterface
         try {
             $this->storageDriver->save($identifier, $content);
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
@@ -205,7 +208,7 @@ class Ssess implements \SessionHandlerInterface
         try {
             $this->storageDriver->destroy($identifier);
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }
@@ -225,7 +228,7 @@ class Ssess implements \SessionHandlerInterface
         try {
             $this->storageDriver->clearOld($maxLife * 1000000);
             return true;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             return false;
         }
     }

@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Ssess\Storage;
+namespace PHPSess\Storage;
 
-use Ssess\Exception\SessionNotFoundException;
+use PHPSess\Exception\SessionNotFoundException;
 
 /**
  * Uses an array to mock the session data. May be useful in tests.
  *
- * @package Ssess\Storage
+ * @package PHPSess\Storage
  * @author  Ayrton Fidelis <ayrton.vargas33@gmail.com>
  */
 class MockStorage implements StorageInterface
@@ -23,7 +23,7 @@ class MockStorage implements StorageInterface
     /**
      * Saves the encrypted session data to the storage.
      *
-     * @throws \Ssess\Exception\UnableToSaveException
+     * @throws \PHPSess\Exception\UnableToSaveException
      * @param  string $sessionIdentifier The string used to identify the session data.
      * @param  string $sessionData       The encrypted session data.
      * @return void
@@ -39,8 +39,8 @@ class MockStorage implements StorageInterface
     /**
      * Fetches the encrypted session data based on the session identifier.
      *
-     * @throws \Ssess\Exception\SessionNotFoundException
-     * @throws \Ssess\Exception\UnableToFetchException
+     * @throws \PHPSess\Exception\SessionNotFoundException
+     * @throws \PHPSess\Exception\UnableToFetchException
      * @param  string $sessionIdentifier The session identifier
      * @return string The encrypted session data
      */
@@ -67,7 +67,7 @@ class MockStorage implements StorageInterface
     /**
      * Remove this session from the storage.
      *
-     * @throws \Ssess\Exception\SessionNotFoundException
+     * @throws \PHPSess\Exception\SessionNotFoundException
      * @param  string $sessionIdentifier The session identifier.
      * @return void
      */
@@ -83,7 +83,7 @@ class MockStorage implements StorageInterface
     /**
      * Removes the session older than the specified time from the storage.
      *
-     * @throws \Ssess\Exception\UnableToDeleteException
+     * @throws \PHPSess\Exception\UnableToDeleteException
      * @param  int $maxLife The maximum time (in microseconds) that a session file must be kept.
      * @return void
      */

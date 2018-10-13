@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Ssess\Tests;
+namespace PHPSess\Tests;
 
-use Ssess\Storage\FileStorage;
-use Ssess\Exception\SessionNotFoundException;
-use Ssess\Exception\DirectoryNotWritableException;
-use Ssess\Exception\DirectoryNotReadableException;
-use Ssess\Exception\UnableToSaveException;
-use Ssess\Exception\UnableToDeleteException;
-use Ssess\Exception\UnableToCreateDirectoryException;
+use PHPSess\Storage\FileStorage;
+use PHPSess\Exception\SessionNotFoundException;
+use PHPSess\Exception\DirectoryNotWritableException;
+use PHPSess\Exception\DirectoryNotReadableException;
+use PHPSess\Exception\UnableToSaveException;
+use PHPSess\Exception\UnableToDeleteException;
+use PHPSess\Exception\UnableToCreateDirectoryException;
 
 use PHPUnit\Framework\TestCase;
 use org\bovigo\vfs\vfsStream;
