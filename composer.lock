@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "16f2980c606bee29cba8be62a8ab26bf",
+    "content-hash": "082b3c0f2bde9de9ff52d1dcfec2aa7c",
     "packages": [],
     "packages-dev": [
         {
@@ -155,52 +155,6 @@
                 "versions"
             ],
             "time": "2018-06-13T13:22:40+00:00"
-        },
-        {
-            "name": "mikey179/vfsStream",
-            "version": "v1.6.5",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mikey179/vfsStream.git",
-                "reference": "d5fec95f541d4d71c4823bb5e30cf9b9e5b96145"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/mikey179/vfsStream/zipball/d5fec95f541d4d71c4823bb5e30cf9b9e5b96145",
-                "reference": "d5fec95f541d4d71c4823bb5e30cf9b9e5b96145",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.5"
-            },
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.6.x-dev"
-                }
-            },
-            "autoload": {
-                "psr-0": {
-                    "org\\bovigo\\vfs\\": "src/main/php"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD-3-Clause"
-            ],
-            "authors": [
-                {
-                    "name": "Frank Kleine",
-                    "homepage": "http://frankkleine.de/",
-                    "role": "Developer"
-                }
-            ],
-            "description": "Virtual file system to mock the real file system in unit tests.",
-            "homepage": "http://vfs.bovigo.org/",
-            "time": "2017-08-01T08:02:14+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -1193,12 +1147,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpsess/mock-storage.git",
-                "reference": "bc8474eeef0dd3ce3d626d406ffc9e300aae15ed"
+                "reference": "696bbef2c03a7702bb647df34c353a2b3c249407"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpsess/mock-storage/zipball/bc8474eeef0dd3ce3d626d406ffc9e300aae15ed",
-                "reference": "bc8474eeef0dd3ce3d626d406ffc9e300aae15ed",
+                "url": "https://api.github.com/repos/phpsess/mock-storage/zipball/696bbef2c03a7702bb647df34c353a2b3c249407",
+                "reference": "696bbef2c03a7702bb647df34c353a2b3c249407",
                 "shasum": ""
             },
             "require": {
@@ -1228,7 +1182,7 @@
                 }
             ],
             "description": "A mock storage driver for PHPSess",
-            "time": "2018-10-13T20:11:51+00:00"
+            "time": "2018-10-13T20:17:10+00:00"
         },
         {
             "name": "phpsess/openssl-encryption",
@@ -1236,18 +1190,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpsess/openssl-encryption.git",
-                "reference": "8a5883cdba380db4254fd1e0f8a2b52e9ca6d58b"
+                "reference": "13a46738e9c42ac52bc68b3da683e138006c851b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpsess/openssl-encryption/zipball/8a5883cdba380db4254fd1e0f8a2b52e9ca6d58b",
-                "reference": "8a5883cdba380db4254fd1e0f8a2b52e9ca6d58b",
+                "url": "https://api.github.com/repos/phpsess/openssl-encryption/zipball/13a46738e9c42ac52bc68b3da683e138006c851b",
+                "reference": "13a46738e9c42ac52bc68b3da683e138006c851b",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
                 "ext-openssl": "*",
-                "php": ">=7.1"
+                "php": ">=7.1",
+                "phpsess/session-handler": "*"
             },
             "require-dev": {
                 "phpmd/phpmd": "^2.6",
@@ -1272,7 +1227,7 @@
                 }
             ],
             "description": "A OpenSSL encryption driver for PHPSess",
-            "time": "2018-10-13T21:23:42+00:00"
+            "time": "2018-10-13T21:32:36+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -3016,8 +2971,6 @@
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
-        "ext-openssl": "*",
-        "ext-json": "*",
         "php": ">=7.1"
     },
     "platform-dev": []
