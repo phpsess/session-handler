@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b90ea832045725cabf936cd0fb4cc23",
+    "content-hash": "95849de3cc53f9b7d6fc7962771735d2",
     "packages": [],
     "packages-dev": [
         {
@@ -1186,6 +1186,49 @@
                 "pmd"
             ],
             "time": "2017-01-20T14:41:10+00:00"
+        },
+        {
+            "name": "phpsess/mock-storage",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpsess/mock-storage.git",
+                "reference": "bc8474eeef0dd3ce3d626d406ffc9e300aae15ed"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpsess/mock-storage/zipball/bc8474eeef0dd3ce3d626d406ffc9e300aae15ed",
+                "reference": "bc8474eeef0dd3ce3d626d406ffc9e300aae15ed",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.1",
+                "phpsess/session-handler": "*"
+            },
+            "require-dev": {
+                "phpmd/phpmd": "^2.6",
+                "phpstan/phpstan": "^0.10.3",
+                "phpunit/phpunit": "^7",
+                "squizlabs/php_codesniffer": "^3.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PHPSess\\Storage\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ayrton Fidelis",
+                    "email": "ayrton.vargas33@gmail.com"
+                }
+            ],
+            "description": "A mock storage driver for PHPSess",
+            "time": "2018-10-13T20:11:51+00:00"
         },
         {
             "name": "phpspec/prophecy",
@@ -2921,9 +2964,11 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
-    "stability-flags": [],
-    "prefer-stable": false,
+    "minimum-stability": "dev",
+    "stability-flags": {
+        "phpsess/mock-storage": 20
+    },
+    "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "ext-openssl": "*",

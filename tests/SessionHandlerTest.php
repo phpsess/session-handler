@@ -6,7 +6,7 @@ namespace PHPSess\Tests;
 
 use PHPSess\SessionHandler;
 use PHPSess\CryptProvider\OpenSSLCryptProvider;
-use PHPSess\Interfaces\MockStorage;
+use PHPSess\Storage\MockStorage;
 
 use PHPSess\Exception\UseStrictModeDisabledException;
 use PHPSess\Exception\UseCookiesDisabledException;
