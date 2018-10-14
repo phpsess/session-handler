@@ -37,9 +37,9 @@ interface StorageInterface
      * Asks the drive to lock the session storage
      *
      * @param string $sessionIdentifier The session identifier to be locked
-     * @return void
+     * @return bool Whether the session could be locked or not
      */
-    public function lock(string $sessionIdentifier): void;
+    public function lock(string $sessionIdentifier): bool;
 
     /**
      * Asks the drive to unlock the session storage
