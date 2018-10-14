@@ -34,6 +34,22 @@ interface StorageInterface
     public function get(string $sessionIdentifier): string;
 
     /**
+     * Asks the drive to lock the session storage
+     *
+     * @param string $sessionIdentifier The session identifier to be locked
+     * @return void
+     */
+    public function lock(string $sessionIdentifier): void;
+
+    /**
+     * Asks the drive to unlock the session storage
+     *
+     * @param string $sessionIdentifier The session identifier to be unlocked
+     * @return void
+     */
+    public function unlock(string $sessionIdentifier): void;
+
+    /**
      * Checks if a session with the given identifier exists in the storage.
      *
      * @param  string $sessionIdentifier The session identifier.
