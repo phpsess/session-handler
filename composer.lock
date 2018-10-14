@@ -1147,12 +1147,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpsess/mock-storage.git",
-                "reference": "696bbef2c03a7702bb647df34c353a2b3c249407"
+                "reference": "f68fbc13ce9893f322d39d3df15e8c50022cff5c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpsess/mock-storage/zipball/696bbef2c03a7702bb647df34c353a2b3c249407",
-                "reference": "696bbef2c03a7702bb647df34c353a2b3c249407",
+                "url": "https://api.github.com/repos/phpsess/mock-storage/zipball/f68fbc13ce9893f322d39d3df15e8c50022cff5c",
+                "reference": "f68fbc13ce9893f322d39d3df15e8c50022cff5c",
                 "shasum": ""
             },
             "require": {
@@ -1182,7 +1182,7 @@
                 }
             ],
             "description": "A mock storage driver for PHPSess",
-            "time": "2018-10-13T20:17:10+00:00"
+            "time": "2018-10-14T12:32:39+00:00"
         },
         {
             "name": "phpsess/openssl-encryption",
@@ -1190,12 +1190,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/phpsess/openssl-encryption.git",
-                "reference": "13a46738e9c42ac52bc68b3da683e138006c851b"
+                "reference": "168b986f70c28de54bbf3133fdc84d99193d0226"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phpsess/openssl-encryption/zipball/13a46738e9c42ac52bc68b3da683e138006c851b",
-                "reference": "13a46738e9c42ac52bc68b3da683e138006c851b",
+                "url": "https://api.github.com/repos/phpsess/openssl-encryption/zipball/168b986f70c28de54bbf3133fdc84d99193d0226",
+                "reference": "168b986f70c28de54bbf3133fdc84d99193d0226",
                 "shasum": ""
             },
             "require": {
@@ -1227,7 +1227,7 @@
                 }
             ],
             "description": "A OpenSSL encryption driver for PHPSess",
-            "time": "2018-10-13T21:32:36+00:00"
+            "time": "2018-10-14T02:48:29+00:00"
         },
         {
             "name": "phpspec/prophecy",
