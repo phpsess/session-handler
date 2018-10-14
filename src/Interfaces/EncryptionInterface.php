@@ -16,13 +16,9 @@ interface EncryptionInterface
     /**
      * EncryptionInterface constructor.
      *
-     * @throws \PHPSess\Exception\UnknownEncryptionAlgorithmException
-     * @throws \PHPSess\Exception\UnknownHashAlgorithmException
-     * @param  string $appKey              Defines the App Key.
-     * @param  string $hashAlgorithm       Defines the algorithm used to create hashes.
-     * @param  string $encryptionAlgorithm Defines the algorithm to encrypt/decrypt data.
+     * @param  string $appKey The app-key that will make part of the encryption key and identifier hash.
      */
-    public function __construct(string $appKey, string $hashAlgorithm, string $encryptionAlgorithm);
+    public function __construct(string $appKey);
 
     /**
      * Makes a session identifier based on the session id.
