@@ -169,6 +169,23 @@ final class SessionHandlerTest extends TestCase
     }
 
     /**
+     * @covers \PHPSess\SessionHandler::open
+     */
+    public function testTakeTwoTriesToLock()
+    {
+        $crypt_provider = new OpenSSLEncryption('appKey');
+
+        $storage = $this->createMock(MockStorage::class);
+        $storage->method('lock')->willReturn(false, true);
+
+        $ssess = new SessionHandler($crypt_provider, $storage);
+
+        $opened = $ssess->open('any_path', 'any_name');
+
+        $this->assertTrue($opened);
+    }
+
+    /**
      * @covers \PHPSess\SessionHandler::write
      * @covers \PHPSess\SessionHandler::close
      * @covers \PHPSess\SessionHandler::open

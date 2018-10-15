@@ -140,6 +140,14 @@ class SessionHandler implements SessionHandlerInterface
      */
     public function open($savePath, $sessionName): bool
     {
+        $sessionId = session_id();
+
+        $identifier = $this->cryptProvider->makeSessionIdentifier($sessionId);
+
+        while (!$this->storageDriver->lock($identifier)) {
+            usleep(1000);
+        }
+
         return true;
     }
 
@@ -150,6 +158,12 @@ class SessionHandler implements SessionHandlerInterface
      */
     public function close(): bool
     {
+        $sessionId = session_id();
+
+        $identifier = $this->cryptProvider->makeSessionIdentifier($sessionId);
+
+        $this->storageDriver->unlock($identifier);
+
         return true;
     }
 
