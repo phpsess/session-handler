@@ -8,6 +8,7 @@ namespace PHPSess\Exception;
  * Class DirectoryNotReadableException
  * @package PHPSess\Exception
  * @deprecated Use the generic UnableToFetchException with a custom message instead.
+ * @see UnableToFetchException
  */
 class DirectoryNotReadableException extends \RuntimeException
 {

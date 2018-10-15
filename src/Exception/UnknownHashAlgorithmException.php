@@ -8,6 +8,7 @@ namespace PHPSess\Exception;
  * Class UnknownHashAlgorithmException
  * @package PHPSess\Exception
  * @deprecated Use the generic UnableToHashException with a custom message instead.
+ * @see UnableToHashException
  */
 class UnknownHashAlgorithmException extends \RuntimeException
 {

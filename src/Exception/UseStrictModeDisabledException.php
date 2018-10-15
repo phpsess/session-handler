@@ -8,6 +8,7 @@ namespace PHPSess\Exception;
  * Class UseStrictModeDisabledException
  * @package PHPSess\Exception
  * @deprecated Use the generic InsecureSettingsException with a custom message instead.
+ * @see InsecureSettingsException
  */
 class UseStrictModeDisabledException extends \RuntimeException
 {

@@ -8,6 +8,7 @@ namespace PHPSess\Exception;
  * Class UseOnlyCookiesDisabledException
  * @package PHPSess\Exception
  * @deprecated Use the generic InsecureSettingsException with a custom message instead.
+ * @see InsecureSettingsException
  */
 class UseOnlyCookiesDisabledException extends \RuntimeException
 {

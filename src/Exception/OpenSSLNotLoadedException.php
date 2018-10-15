@@ -7,7 +7,10 @@ namespace PHPSess\Exception;
 /**
  * Class OpenSSLNotLoadedException
  * @package PHPSess\Exception
- * @deprecated
+ * @deprecated This extension is driver specific. Throw the proper exception when trying to use it instead.
+ * @see UnableToEncryptException
+ * @see UnableToDecryptException
+ * @see UnableToHashException
  */
 class OpenSSLNotLoadedException extends \RuntimeException
 {
