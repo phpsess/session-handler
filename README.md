@@ -1,6 +1,13 @@
 ## PHPSess
 PHP Session. The way it should be.
 
+[![Build Status](https://travis-ci.com/phpsess/session-handler.svg?branch=master)](https://travis-ci.com/phpsess/session-handler)
+[![License](https://img.shields.io/github/license/phpsess/session-handler.svg)](https://opensource.org/licenses/MIT)
+[![Maintainability](https://api.codeclimate.com/v1/badges/17ffcc017acb054fd644/maintainability)](https://codeclimate.com/github/phpsess/session-handler/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/17ffcc017acb054fd644/test_coverage)](https://codeclimate.com/github/phpsess/session-handler/test_coverage)
+
+__----- STILL IN DEVELOPMENT -----__
+
 PHPSess is a fully featured PHP Session Handler. Anyone can write a new driver to it, making it
 a breeze to store the session data in __[ New Shiny and Fast DB ]__ or secure
 the data with __[ New State of Art Encryption Library ]__.
