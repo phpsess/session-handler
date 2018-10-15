@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PHPSess;
 
+use PHPSess\Exception\InsecureSettingsException;
 use PHPSess\Interfaces\StorageInterface;
 use PHPSess\Interfaces\EncryptionInterface;
 
@@ -66,10 +67,7 @@ class SessionHandler implements SessionHandlerInterface
     /**
      * Throws exceptions when insecure INI settings are detected.
      *
-     * @throws UseCookiesDisabledException
-     * @throws UseOnlyCookiesDisabledException
-     * @throws UseTransSidEnabledException
-     * @throws UseStrictModeDisabledException
+     * @throws InsecureSettingsException
      * @return void
      */
     private function warnInsecureSettings(): void
@@ -79,19 +77,23 @@ class SessionHandler implements SessionHandlerInterface
         }
 
         if (!ini_get('session.use_cookies')) {
-            throw new UseCookiesDisabledException();
+            $errorMessage = 'The ini setting session.use_cookies should be set to true.';
+            throw new InsecureSettingsException($errorMessage);
         }
 
         if (!ini_get('session.use_only_cookies')) {
-            throw new UseOnlyCookiesDisabledException();
+            $errorMessage = 'The ini setting session.use_only_cookies should be set to true.';
+            throw new InsecureSettingsException($errorMessage);
         }
 
         if (ini_get('session.use_trans_sid')) {
-            throw new UseTransSidEnabledException();
+            $errorMessage = 'The ini setting session.use_trans_id should be set to false.';
+            throw new InsecureSettingsException($errorMessage);
         }
 
         if (!ini_get('session.use_strict_mode')) {
-            throw new UseStrictModeDisabledException();
+            $errorMessage = 'The ini setting session.use_strict_mode should be set to true.';
+            throw new InsecureSettingsException($errorMessage);
         }
     }
 

@@ -10,10 +10,7 @@ use PHPSess\SessionHandler;
 use PHPSess\Encryption\OpenSSLEncryption;
 use PHPSess\Storage\MockStorage;
 
-use PHPSess\Exception\UseStrictModeDisabledException;
-use PHPSess\Exception\UseCookiesDisabledException;
-use PHPSess\Exception\UseOnlyCookiesDisabledException;
-use PHPSess\Exception\UseTransSidEnabledException;
+use PHPSess\Exception\InsecureSettingsException;
 
 use PHPUnit\Framework\TestCase;
 
@@ -95,7 +92,7 @@ final class SessionHandlerTest extends TestCase
     {
         ini_set('session.use_strict_mode', '0');
 
-        $this->expectException(UseStrictModeDisabledException::class);
+        $this->expectException(InsecureSettingsException::class);
 
         $this->initSecureSession();
     }
@@ -107,7 +104,7 @@ final class SessionHandlerTest extends TestCase
     {
         ini_set('session.use_cookies', '0');
 
-        $this->expectException(UseCookiesDisabledException::class);
+        $this->expectException(InsecureSettingsException::class);
 
         $this->initSecureSession();
     }
@@ -119,7 +116,7 @@ final class SessionHandlerTest extends TestCase
     {
         ini_set('session.use_only_cookies', '0');
 
-        $this->expectException(UseOnlyCookiesDisabledException::class);
+        $this->expectException(InsecureSettingsException::class);
 
         $this->initSecureSession();
     }
@@ -131,7 +128,7 @@ final class SessionHandlerTest extends TestCase
     {
         ini_set('session.use_trans_sid', '1');
 
-        $this->expectException(UseTransSidEnabledException::class);
+        $this->expectException(InsecureSettingsException::class);
 
         $this->initSecureSession();
     }
