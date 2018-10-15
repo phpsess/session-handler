@@ -19,15 +19,12 @@ use Exception;
  * Handles the session in a secure way.
  *
  * @todo Implement timestamp based session (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-data-deletion)
- * @todo Implement session locking (http://php.net/manual/en/features.session.security.management.php#features.session.security.management.session-locking)
  * @todo Allow user to specify APP name so that session files from different applications never gets mixed
  * @todo Option to lock session to IP
  * @todo Option to lock session to User Agent
  * @todo Option to lock session to Host
  * @todo Option to create session cookie with mutating random name
  * @todo Create a way to change encryption/hash algorithms over time without loosing previous sessions, to allow incremental security upgrades
- * @todo Provide a storage driver interface (such as file, mysqli, pdo, redis, memcached, etc)
- * @todo Specify a better session directory and files permissions
  *
  * @package PHPSess
  * @author  Ayrton Fidelis <ayrton.vargas33@gmail.com>
