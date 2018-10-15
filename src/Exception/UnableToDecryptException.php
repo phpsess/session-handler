@@ -7,5 +7,5 @@ namespace PHPSess\Exception;
 class UnableToDecryptException extends \RuntimeException
 {
 
-    protected $message = 'The session encryption driver was unable to decrypt the session. This may be caused by a wrong app key or session id.';
+    protected $message = 'The session encryption driver was unable to decrypt the session.';
 }

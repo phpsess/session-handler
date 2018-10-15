@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace PHPSess\Exception;
 
+/**
+ * Class UseTransSidEnabledException
+ * @package PHPSess\Exception
+ * @deprecated Use the generic InsecureSettingsException with a custom message instead.
+ */
 class UseTransSidEnabledException extends \RuntimeException
 {
 

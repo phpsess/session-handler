@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace PHPSess\Exception;
 
+/**
+ * Class UnableToCreateDirectoryException
+ * @package PHPSess\Exception
+ * @deprecated Use the generic UnableToSetupStorageException with a custom message instead.
+ */
 class UnableToCreateDirectoryException extends \RuntimeException
 {
 

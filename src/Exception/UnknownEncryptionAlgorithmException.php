@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace PHPSess\Exception;
 
+/**
+ * Class UnknownEncryptionAlgorithmException
+ * @package PHPSess\Exception
+ * @deprecated Use the generic UnableToEncryptException with a custom message instead.
+ */
 class UnknownEncryptionAlgorithmException extends \RuntimeException
 {
 
